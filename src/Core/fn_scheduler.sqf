@@ -1,4 +1,4 @@
-wwhile {true} do
+while {true} do
 {
     sleep 1;
 };
