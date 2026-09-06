@@ -1,0 +1,25 @@
+# Windows
+Thumbs.db
+Desktop.ini
+
+# VSCode
+.vscode/
+
+# JetBrains
+.idea/
+
+# Arma
+*.rpt
+*.bidmp
+*.mdmp
+
+# Build artifacts
+*.pbo
+build/
+
+# Temp
+*.tmp
+*.bak
+
+# macOS
+.DS_Store
