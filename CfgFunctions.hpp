@@ -20,6 +20,8 @@ class CfgFunctions
             class createBlackboard {};
             class publishContact {};
             class queryContacts {};
+            class getContact {};
+            class reserveTarget {};
         };
     };
 };
