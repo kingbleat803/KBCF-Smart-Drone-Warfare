@@ -30,6 +30,10 @@ class CfgFunctions
             file = "src\AI";
 
             class classifyTarget {};
+            class scoreTarget {};
+            class selectTarget {};
         };
-    };
+    };  
+    
+
 };
