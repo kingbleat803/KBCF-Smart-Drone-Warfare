@@ -22,6 +22,14 @@ class CfgFunctions
             class queryContacts {};
             class getContact {};
             class reserveTarget {};
+            class releaseTarget {};
+        };
+
+        class AI
+        {
+            file = "src\AI";
+
+            class classifyTarget {};
         };
     };
 };
