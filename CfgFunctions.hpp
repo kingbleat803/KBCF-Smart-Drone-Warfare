@@ -11,7 +11,7 @@ class CfgFunctions
             class init {};
             class scheduler {};
             class log {};
-        };
+        }
 
         class Blackboard
         {
@@ -23,7 +23,7 @@ class CfgFunctions
             class getContact {};
             class reserveTarget {};
             class releaseTarget {};
-        };
+        }
 
         class AI
         {
@@ -32,12 +32,7 @@ class CfgFunctions
             class classifyTarget {};
             class scoreTarget {};
             class selectTarget{};
-        }; 
-        
-        class Drones
-        {   
-            file = "src\Drones";
-            
-            class reconScan {};
-            class processContact {};
-            class assignTarget {}
+
+        };
+    };
+};
