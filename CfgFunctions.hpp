@@ -40,4 +40,4 @@ class CfgFunctions
             
             class reconScan {};
             class processContact {};
-        };
+            class assignTarget {}
