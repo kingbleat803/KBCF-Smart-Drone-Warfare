@@ -31,9 +31,13 @@ class CfgFunctions
 
             class classifyTarget {};
             class scoreTarget {};
-            class selectTarget {};
+            class selectTarget{};
+        }; 
+        
+        class Drones
+        {   
+            file = "src\Drones";
+            
+            class reconScan {};
+            class processContact {};
         };
-    };  
-    
-
-};
