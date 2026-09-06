@@ -1,0 +1,25 @@
+class CfgFunctions
+{
+    class KBCF
+    {
+        tag = "KBCF";
+
+        class Core
+        {
+            file = "src\Core";
+
+            class init {};
+            class scheduler {};
+            class log {};
+        };
+
+        class Blackboard
+        {
+            file = "src\Blackboard";
+
+            class createBlackboard {};
+            class publishContact {};
+            class queryContacts {};
+        };
+    };
+};
