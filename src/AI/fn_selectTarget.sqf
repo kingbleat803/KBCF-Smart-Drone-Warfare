@@ -10,27 +10,28 @@ params
     ["_contacts", []]
 ];
 
-private _bestContact = createHa*hMap;
+private _bestContact = createHashMap;
 private _bestScore = -1;
 
 {
-*   private _classification =
-     *  _x getOrDefault
+    private _classification =
+        _x getOrDefault
         [
             "classification",
             "UNKNOWN"
         ];
 
-    private *score =
+    private _score =
     [
         _classification
-    ] call KBCF_fnc_scoreTarget*
+    ] call KBCF_fnc_scoreTarget;
 
-    if (_score > _bestScore) the*
+    if (_score > _bestScore) then
     {
-        _bestScore = _score*
+        _bestScore = _score;
         _bestContact = _x;
-    };*}
-forEach _contacts;
+    };
 
-_bestContact*
+} forEach _contacts;
+
+_bestContact

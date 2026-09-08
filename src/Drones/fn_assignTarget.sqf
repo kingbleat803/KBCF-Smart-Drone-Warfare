@@ -6,9 +6,8 @@
 */
 
 params
-
-    ["_drone", objNull],
-    ["_contact", createHashMap]
+["_drone", objNull],
+["_contact", createHashMap]
 
 if (isNull _drone) exitWith {false};
 

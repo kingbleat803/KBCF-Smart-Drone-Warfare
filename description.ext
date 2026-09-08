@@ -5,4 +5,4 @@ onLoadName = "KBCF Smart Drone Warfare";
 onLoadMission =
 "KBCF Smart Drone Warfare - Battlefield Intelligence and Drone Coordination Framework";
 
-#include "CfgFunctions.hpp"
+#include"CfgFunctions.hpp"

@@ -1,5 +1,5 @@
 /*
-    File: config.sqf
+    File: Config.sqf
 
     Description:
     Global KBCF configuration values.
