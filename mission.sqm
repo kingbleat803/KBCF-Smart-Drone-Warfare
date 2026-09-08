@@ -1,0 +1,121 @@
+version=54;
+class EditorData
+{
+	moveGridStep=1;
+	angleGridStep=0.2617994;
+	scaleGridStep=1;
+	autoGroupingDist=10;
+	toggles=1;
+	class ItemIDProvider
+	{
+		nextID=3;
+	};
+	class Camera
+	{
+		pos[]={2468.7156,22.518042,3734.4966};
+		dir[]={0.71553612,-0.46945274,-0.5173223};
+		up[]={0.38043773,0.88295764,-0.275051};
+		aside[]={-0.58589709,0,-0.81038558};
+	};
+};
+binarizationWanted=0;
+sourceName="tada";
+addons[]=
+{
+	"A3_Characters_F"
+};
+class AddonsMetaData
+{
+	class List
+	{
+		items=1;
+		class Item0
+		{
+			className="A3_Characters_F";
+			name="Arma 3 Alpha - Characters and Clothing";
+			author="Bohemia Interactive";
+			url="https://www.arma3.com";
+		};
+	};
+};
+randomSeed=6068250;
+class ScenarioData
+{
+	author="King Bleat";
+};
+class Mission
+{
+	class Intel
+	{
+		timeOfChanges=1800.0002;
+		startWeather=0.30000001;
+		startWind=0.1;
+		startWaves=0.1;
+		forecastWeather=0;
+		forecastWind=0.1;
+		forecastWaves=0.1;
+		forecastLightnings=0.1;
+		wavesForced=1;
+		windForced=1;
+		year=2035;
+		month=6;
+		day=6;
+		hour=12;
+		minute=0;
+		startFogBase=250;
+		forecastFogBase=250;
+		startFogDecay=0.014;
+		forecastFogDecay=0.014;
+	};
+	class Entities
+	{
+		items=1;
+		class Item0
+		{
+			dataType="Group";
+			side="West";
+			class Entities
+			{
+				items=2;
+				class Item0
+				{
+					dataType="Object";
+					class PositionInfo
+					{
+						position[]={2487.0479,12.549576,3726.1777};
+					};
+					side="West";
+					flags=7;
+					class Attributes
+					{
+						isPlayer=1;
+					};
+					id=1;
+					type="B_soldier_AAR_F";
+					atlOffset=1.4305115e-05;
+				};
+				class Item1
+				{
+					dataType="Object";
+					class PositionInfo
+					{
+						position[]={2480.2725,12.565641,3726.9797};
+					};
+					side="West";
+					flags=5;
+					class Attributes
+					{
+					};
+					id=2;
+					type="B_support_AMort_F";
+					atlOffset=9.5367432e-07;
+				};
+			};
+			class Attributes
+			{
+			};
+			id=0;
+			atlOffset=1.4305115e-05;
+		};
+	};
+};

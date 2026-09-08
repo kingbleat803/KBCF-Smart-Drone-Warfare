@@ -7,7 +7,7 @@
 
 if (!isServer) exitWith {};
 
-call compile preprocessFileLineNumbers "src\Config\config.sqf";
+call compile preprocessFileLineNumbers "src\Config\Config.sqf";
 
 ["INIT","Starting KBCF Smart Drone Warfare"] call KBCF_fnc_log;
 

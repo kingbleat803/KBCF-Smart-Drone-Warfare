@@ -10,50 +10,50 @@ params
     ["_classification", "UNKNOWN"]
 ];
 
-switch (_classific*tion) do
+switch (_classification) do
 {
-    case "MAIN_BATTLE_T*NK":
+    case "MAIN_BATTLE_TANK":
     {
         100
     };
 
-   *case "AIR_DEFENSE":
+    case "AIR_DEFENSE":
     {
-        *5
+        95
     };
 
     case "ARTILLERY":
-  * {
+    {
         90
     };
 
-    case "AP*":
+    case "APC":
     {
         75
     };
 
-    ca*e "HELICOPTER":
+    case "HELICOPTER":
     {
         70
- *  };
+    };
 
     case "DRONE":
     {
-    *   60
+        60
     };
 
-    case "LIGHT_VEHI*LE":
+    case "LIGHT_VEHICLE":
     {
         40
     };
 
-    *ase "INFANTRY":
+    case "INFANTRY":
     {
         20
- *  };
+    };
 
     default
     {
         0
-*   };
+    };
 };

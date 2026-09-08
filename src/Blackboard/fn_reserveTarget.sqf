@@ -12,36 +12,42 @@ params
     ["_drone", objNull]
 ];
 
-if (_conta*tId isEqualTo "") exitWith {false}*
+if (_contactId isEqualTo "") exitWith
+{
+    false
+};
 
 private _contact =
 [
     _side,
     _contactId
-] call KBCF_fnc_getC*ntact;
+] call KBCF_fnc_getContact;
 
-if ((count _contact) isEqu*lTo 0) exitWith {false};
+if ((count _contact) isEqualTo 0) exitWith
+{
+    false
+};
 
-private *reservation =
-    _contact getOrDe*ault
+private _reservation =
+    _contact getOrDefault
     [
         "reservation",
         createHashMap
     ];
 
-priva*e _owner =
-    _reservation getOrD*fault
+private _owner =
+    _reservation getOrDefault
     [
         "owner",
         objNull
     ];
 
-if (!isNull _own*r) exitWith
+if (!isNull _owner) exitWith
 {
     false
 };
 
-_reser*ation set
+_reservation set
 [
     "owner",
     _drone
@@ -53,7 +59,7 @@ _reservation set
     serverTime
 ];
 
-_contact*set
+_contact set
 [
     "reservation",
     _reservation

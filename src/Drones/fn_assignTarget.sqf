@@ -1,24 +1,16 @@
 /*
-    File: fn_assignTarget.sqf
+    File: fn_executeAttack.sqf
 
-    Description:
-  Assigns a contact to a drone.
+   Description:
+    Executes an assigned drone attack.
 */
 
 params
+["_drone", objNull],
+["_contact", createHashMap]
 
-    ["_drone", objNull],
-    ["_contact", createHashMap]
+if (isNull _drone) exitWith {false};
 
-
-if (isNull _drone) exitWith {fa*se};
-
-if ((count _contact) isEqual*o 0) exitWith {false};
-
-_drone set*ariable
-
-    "KBCF_AssignedTarget",
-    _contact
-];
-
+if ((count_contact) isEqualTo 0) exitWith {false};
+_drone setvariable ["KBCF_AssignedTarget",_contact];
 true
