@@ -1,7 +1,7 @@
 /*
     File: fn_executeAttack.sqf
 
-    Description:
+   Description:
     Executes an assigned drone attack.
 */
 
