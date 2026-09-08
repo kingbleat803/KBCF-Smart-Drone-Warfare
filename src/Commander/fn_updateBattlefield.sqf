@@ -1,64 +1,40 @@
+/*
+    File: fn_updateContact.sqf
 
+    Description:
+    Updates an existing contact with fresh information.
+*/
 
 params
-
-    ["_side", sideUnknown],
-    ["_drone", objNull];
-
-if (isNull _drone) exitWith {};
-
-private _contacts =
 [
-    _side
-] call KBCF_fnc_queryContacts;
-
-if ((count _contacts) isEqualTo 0) exitWith
-{
-    [
-        "COMMANDER",
-        "No Contacts Available"
-    ] call KBCF_fnc_log;
-};
-
-private _bestContact =
-[
-    _contacts
-] call KBCF_fnc_selectTarget;
-
-if ((count _bestContact) isEqualTo 0) exitWith {};
-
-private _contactId =
-_bestContact getOrDefault
-[
-    "id",
-    ""
+    ["_contact", createHashMap],
+    ["_target", objNull]
 ];
 
-private _reserved =
+if (
+    (count _contact) isEqualTo 0
+) exitWith {};
+
+if (
+    isNull _target
+) exitWith {};
+
+_contact set
 [
-    _side,
-    _contactId,
-    _drone
-] call KBCF_fnc_reserveTarget;
+    "position",
+    getPosATL _target
+];
 
-if (!_reserved) exitWith
-{
-    [
-        "COMMANDER",
-        "Contact Already Reserved"
-    ] call KBCF_fnc_log;
-};
-
+_contact set
 [
-    _drone,
-   _bestContact
-]    call KBCF_fnc_assignTarget;
+    "lastSeen",
+    serverTime
+];
 
+_contact set
+[
+    "alive",
+    alive _target
+];
 
-    "COMMANDER",
-    format
-    [
-        "Assigned Contact %1",
-        _contactId
-    ]
- call KBCF_fnc_log;
+_contact
