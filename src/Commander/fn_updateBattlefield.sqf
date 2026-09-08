@@ -1,40 +1,125 @@
 /*
-    File: fn_updateContact.sqf
+    File: fn_updateBattlefield.sqf
 
     Description:
-    Updates an existing contact with fresh information.
+    Assigns the best available contacts to available drones.
 */
 
 params
 [
-    ["_contact", createHashMap],
-    ["_target", objNull]
+    ["_side", sideUnknown],
+    ["_drones", []]
 ];
 
-if (
-    (count _contact) isEqualTo 0
-) exitWith {};
+if (_side isEqualTo sideUnknown) exitWith
+{
+    0
+};
 
-if (
-    isNull _target
-) exitWith {};
+if ((count _drones) isEqualTo 0) exitWith
+{
+    0
+};
 
-_contact set
+private _contacts =
 [
-    "position",
-    getPosATL _target
-];
+    _side
+] call KBCF_fnc_queryContacts;
 
-_contact set
-[
-    "lastSeen",
-    serverTime
-];
+if ((count _contacts) isEqualTo 0) exitWith
+{
+    0
+};
 
-_contact set
-[
-    "alive",
-    alive _target
-];
+private _assignmentCount = 0;
 
-_contact
+{
+    private _drone = _x;
+
+    if (!isNull _drone && {alive _drone}) then
+    {
+        private _availableContacts =
+            _contacts select
+            {
+                private _reservation =
+                    _x getOrDefault
+                    [
+                        "reservation",
+                        createHashMap
+                    ];
+
+                private _owner =
+                    _reservation getOrDefault
+                    [
+                        "owner",
+                        objNull
+                    ];
+
+                isNull _owner
+            };
+
+        if ((count _availableContacts) > 0) then
+        {
+            private _selectedContact =
+            [
+                _availableContacts,
+                _drone
+            ] call KBCF_fnc_selectTarget;
+
+            if ((count _selectedContact) > 0) then
+            {
+                private _contactId =
+                    _selectedContact getOrDefault
+                    [
+                        "id",
+                        ""
+                    ];
+
+                if (_contactId isNotEqualTo "") then
+                {
+                    private _reserved =
+                    [
+                        _side,
+                        _contactId,
+                        _drone
+                    ] call KBCF_fnc_reserveTarget;
+
+                    if (_reserved) then
+                    {
+                        private _assigned =
+                        [
+                            _drone,
+                            _selectedContact
+                        ] call KBCF_fnc_assignTarget;
+
+                        if (_assigned) then
+                        {
+                            _assignmentCount =
+                                _assignmentCount + 1;
+
+                            [
+                                "COMMANDER",
+                                format
+                                [
+                                    "Assigned contact %1 to drone %2",
+                                    _contactId,
+                                    netId _drone
+                                ]
+                            ] call KBCF_fnc_log;
+                        }
+                        else
+                        {
+                            [
+                                _side,
+                                _contactId
+                            ] call KBCF_fnc_releaseTarget;
+                        };
+                    };
+                };
+            };
+        };
+    };
+
+} forEach _drones;
+
+_assignmentCount
