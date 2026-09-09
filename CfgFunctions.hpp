@@ -79,6 +79,7 @@ class CfgFunctions
             class actionObserve {};
             class actionTrack {};
             class actionShadow {};
+            class actionReposition {};
         };
     };
 };

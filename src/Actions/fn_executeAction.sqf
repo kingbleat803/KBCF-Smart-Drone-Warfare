@@ -112,6 +112,15 @@ private _result = switch (_actionType) do
         ] call KBCF_fnc_actionShadow
     };
 
+    case "REPOSITION":
+    {
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_actionReposition
+    };
+
     default
     {
         createHashMapFromArray
