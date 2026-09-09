@@ -58,5 +58,12 @@ class CfgFunctions
             class reconScan {};
             class reassignTarget {};
         };
+        
+        class Planning
+        {
+            file = "src\Planning";
+
+            class planAttack {};
+        };
     };
 };
