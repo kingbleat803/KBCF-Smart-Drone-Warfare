@@ -58,13 +58,22 @@ class CfgFunctions
             class reconScan {};
             class reassignTarget {};
         };
-        
+
         class Planning
         {
             file = "src\Planning";
 
+            class evaluateEngagement {};
             class planAttack {};
             class executePlan {};
+        };
+
+        class Actions
+        {
+            file = "src\Actions";
+
+            class executeAction {};
+            class actionMoveToIntercept {};
         };
     };
 };
