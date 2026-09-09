@@ -99,18 +99,50 @@ private _availableContacts =
 
                         if (_assigned) then
                         {
-                            _assignmentCount =
-                                _assignmentCount + 1;
-
+                            private _plan =
                             [
-                                "COMMANDER",
-                                format
+                                _drone,
+                                _selectedContact
+                            ] call KBCF_fnc_planAttack;
+
+                            if ((count _plan) isEqualTo 0) then
+                            {
+                                _drone setVariable
                                 [
-                                    "Assigned contact %1 to drone %2",
-                                    _contactId,
-                                    netId _drone
-                                ]
-                            ] call KBCF_fnc_log;
+                                    "KBCF_AssignedTarget",
+                                    createHashMap
+                                ];
+
+                                [
+                                    _side,
+                                    _contactId
+                                ] call KBCF_fnc_releaseTarget;
+
+                                [
+                                    "COMMANDER",
+                                    format
+                                    [
+                                        "Rolled back assignment | Contact:%1 | Drone:%2 | Reason:PLAN_EMPTY",
+                                        _contactId,
+                                        netId _drone
+                                    ]
+                                ] call KBCF_fnc_log;
+                            }
+                            else
+                            {
+                                _assignmentCount =
+                                    _assignmentCount + 1;
+
+                                [
+                                    "COMMANDER",
+                                    format
+                                    [
+                                        "Assigned contact %1 to drone %2",
+                                        _contactId,
+                                        netId _drone
+                                    ]
+                                ] call KBCF_fnc_log;
+                            };
                         }
                         else
                         {

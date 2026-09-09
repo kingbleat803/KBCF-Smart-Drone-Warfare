@@ -81,6 +81,7 @@ class CfgFunctions
             class actionShadow {};
             class actionReposition {};
             class actionAbort {};
+            class actionRecon {};
         };
     };
 };
