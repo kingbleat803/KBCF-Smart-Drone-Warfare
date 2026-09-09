@@ -74,37 +74,54 @@ if (_actionType isEqualTo "") exitWith
     ]
 ] call KBCF_fnc_log;
 
-private _result =
-    switch (_actionType) do
+private _result = switch (_actionType) do
+{
+    case "MOVE_TO_INTERCEPT":
     {
-        case "MOVE_TO_INTERCEPT":
-        {
-            [
-                _drone,
-                _contact,
-                _plan
-            ] call KBCF_fnc_actionMoveToIntercept
-        };
-
-        case "OBSERVE":
-        {
-            [
-                _drone,
-                _contact,
-                _plan
-            ] call KBCF_fnc_actionObserve
-        };
-
-        default
-        {
-            createHashMapFromArray
-            [
-                ["success", false],
-                ["completed", false],
-                ["replanRequired", true],
-                ["reason", "UNKNOWN_ACTION"]
-            ]
-        };
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_actionMoveToIntercept
     };
+
+    case "OBSERVE":
+    {
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_actionObserve
+    };
+
+    case "TRACK":
+    {
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_actionTrack
+    };
+
+    case "SHADOW":
+    {
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_actionShadow
+    };
+
+    default
+    {
+        createHashMapFromArray
+        [
+            ["success", false],
+            ["completed", false],
+            ["replanRequired", true],
+            ["reason", "UNKNOWN_ACTION"]
+        ]
+    };
+};
 
 _result

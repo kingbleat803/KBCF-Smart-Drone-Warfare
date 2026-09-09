@@ -77,6 +77,8 @@ class CfgFunctions
             class executeAction {};
             class actionMoveToIntercept {};
             class actionObserve {};
+            class actionTrack {};
+            class actionShadow {};
         };
     };
 };
