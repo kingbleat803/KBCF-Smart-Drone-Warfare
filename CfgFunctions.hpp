@@ -38,6 +38,7 @@ class CfgFunctions
             class predictPosition {};
             class validateAssignment {};
             class trackTarget {};
+            class predictIntercept {};
         };
 
         class Commander
