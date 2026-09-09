@@ -12,6 +12,17 @@ params
     ["_contact", createHashMap]
 ];
 
+/*
+    Generation 7 Debug Marker
+
+    Remove after confirming Arma is loading
+    the correct function version.
+*/
+[
+    "INTERCEPT",
+    "Quadratic intercept solver loaded - GEN7 CHECKPOINT"
+] call KBCF_fnc_log;
+
 if (isNull _drone) exitWith
 {
     [0,0,0]
@@ -27,7 +38,8 @@ private _targetPosition =
     _contact
 ] call KBCF_fnc_predictPosition;
 
-private _dronePosition = getPosASL _drone;
+private _dronePosition =
+    getPosASL _drone;
 
 private _velocity =
     _contact getOrDefault
@@ -41,9 +53,17 @@ private _droneSpeed = 50;
 /*
     Relative position
 */
-private _rx = (_targetPosition # 0) - (_dronePosition # 0);
-private _ry = (_targetPosition # 1) - (_dronePosition # 1);
-private _rz = (_targetPosition # 2) - (_dronePosition # 2);
+private _rx =
+    (_targetPosition # 0) -
+    (_dronePosition # 0);
+
+private _ry =
+    (_targetPosition # 1) -
+    (_dronePosition # 1);
+
+private _rz =
+    (_targetPosition # 2) -
+    (_dronePosition # 2);
 
 /*
     Target velocity
@@ -54,6 +74,7 @@ private _vz = _velocity # 2;
 
 /*
     Quadratic:
+
     (v·v - s²)t² + 2(r·v)t + r·r = 0
 */
 private _a =
@@ -78,13 +99,13 @@ private _c =
 private _interceptTime = -1;
 
 /*
-    Handle near-linear cases
+    Near-linear solution
 */
 if (abs _a < 0.0001) then
 {
     if (abs _b > 0.0001) then
     {
-        _interceptTime = -_c / _b;
+        _interceptTime = -(_c / _b);
     };
 }
 else
@@ -99,27 +120,40 @@ else
             sqrt _discriminant;
 
         private _t1 =
-            (-_b + _root) / (2 * _a);
+            (-_b + _root) /
+            (2 * _a);
 
         private _t2 =
-            (-_b - _root) / (2 * _a);
+            (-_b - _root) /
+            (2 * _a);
 
         if (_t1 > 0 && _t2 > 0) then
         {
-            _interceptTime = _t1 min _t2;
+            _interceptTime =
+                _t1 min _t2;
         }
         else
         {
             if (_t1 > 0) then
             {
-                _interceptTime = _t1;
+                _interceptTime =
+                    _t1;
             };
 
             if (_t2 > 0) then
             {
-                if (_interceptTime < 0 || {_t2 < _interceptTime}) then
+                if
+                (
+                    _interceptTime < 0
+                    ||
+                    {
+                        _t2 < _interceptTime
+                    }
+                )
+                then
                 {
-                    _interceptTime = _t2;
+                    _interceptTime =
+                        _t2;
                 };
             };
         };
@@ -128,12 +162,40 @@ else
 
 /*
     No valid intercept
+
+    IMPORTANT:
+    exitWith prevents execution from
+    continuing into the intercept
+    calculation using an invalid time.
 */
-if (_interceptTime <= 0) then
+if (_interceptTime <= 0) exitWith
 {
-    _contact set ["interceptQuality",0];
-    _contact set ["interceptTime",-1];
-    _contact set ["interceptPosition",_targetPosition];
+    _contact set
+    [
+        "interceptQuality",
+        0
+    ];
+
+    _contact set
+    [
+        "interceptTime",
+        -1
+    ];
+
+    _contact set
+    [
+        "interceptPosition",
+        _targetPosition
+    ];
+
+    [
+        "INTERCEPT",
+        format
+        [
+            "No valid intercept | Position:%1",
+            _targetPosition
+        ]
+    ] call KBCF_fnc_log;
 
     _targetPosition
 };
@@ -143,9 +205,14 @@ if (_interceptTime <= 0) then
 */
 private _interceptPosition =
 [
-    (_targetPosition # 0) + (_vx * _interceptTime),
-    (_targetPosition # 1) + (_vy * _interceptTime),
-    (_targetPosition # 2) + (_vz * _interceptTime)
+    (_targetPosition # 0) +
+    (_vx * _interceptTime),
+
+    (_targetPosition # 1) +
+    (_vy * _interceptTime),
+
+    (_targetPosition # 2) +
+    (_vz * _interceptTime)
 ];
 
 private _interceptQuality =
