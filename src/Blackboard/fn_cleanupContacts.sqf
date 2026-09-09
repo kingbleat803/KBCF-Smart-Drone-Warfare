@@ -2,7 +2,8 @@
     File: fn_cleanupContacts.sqf
 
     Description:
-    Updates contact confidence and removes stale contacts.
+    Updates contact confidence, cleans invalid reservations,
+    and removes stale contacts.
 */
 
 params
@@ -19,7 +20,8 @@ private _expiredContacts = [];
 {
     private _contactId = _x;
 
-    private _contact = _board get _contactId;
+    private _contact =
+        _board get _contactId;
 
     private _lastSeen =
         _contact getOrDefault
@@ -44,6 +46,43 @@ private _expiredContacts = [];
         "confidence",
         _confidence
     ];
+
+    private _reservation =
+        _contact getOrDefault
+        [
+            "reservation",
+            createHashMap
+        ];
+
+    private _owner =
+        _reservation getOrDefault
+        [
+            "owner",
+            objNull
+        ];
+
+    if
+    (
+        !isNull _owner
+        &&
+        {!alive _owner}
+    ) then
+    {
+        _contact set
+        [
+            "reservation",
+            createHashMap
+        ];
+
+        [
+            "RESERVATION",
+            format
+            [
+                "Released Invalid Reservation %1",
+                _contactId
+            ]
+        ] call KBCF_fnc_log;
+    };
 
     if (_confidence <= 0) then
     {

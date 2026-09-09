@@ -38,25 +38,30 @@ private _assignmentCount = 0;
 
     if (!isNull _drone && {alive _drone}) then
     {
-        private _availableContacts =
-            _contacts select
-            {
-                private _reservation =
-                    _x getOrDefault
-                    [
-                        "reservation",
-                        createHashMap
-                    ];
+private _availableContacts =
+    _contacts select
+    {
+        private _valid =
+        [
+            _x
+        ] call KBCF_fnc_validateAssignment;
 
-                private _owner =
-                    _reservation getOrDefault
-                    [
-                        "owner",
-                        objNull
-                    ];
+        private _reservation =
+            _x getOrDefault
+            [
+                "reservation",
+                createHashMap
+            ];
 
-                isNull _owner
-            };
+        private _owner =
+            _reservation getOrDefault
+            [
+                "owner",
+                objNull
+            ];
+
+        _valid && {isNull _owner}
+    };
 
         if ((count _availableContacts) > 0) then
         {

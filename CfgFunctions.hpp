@@ -35,6 +35,9 @@ class CfgFunctions
             class scoreTarget {};
             class selectTarget {};
             class evaluateThreat {};
+            class predictPosition {};
+            class validateAssignment {};
+            class trackTarget {};
         };
 
         class Commander
@@ -52,6 +55,7 @@ class CfgFunctions
             class executeAttack {};
             class processContact {};
             class reconScan {};
+            class reassignTarget {};
         };
     };
 };
