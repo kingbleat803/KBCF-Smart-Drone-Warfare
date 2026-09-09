@@ -260,31 +260,202 @@ An assigned drone can autonomously execute a generated plan.
 ---
 
 ## Generation 8C
+
 Engagement Authorization
 
 Status:
-🚧 PLANNED
+🚧 IN PROGRESS
 
 Purpose:
 
-Teach Lil Homie when to engage.
+Teach Lil Homie when engagement is justified.
 
-Questions:
+---
 
-- Should I attack?
-- Should I wait?
-- Should I abort?
-- Is engagement still valid?
+### Phase 1
+Authorization Framework
+
+Status:
+✅ VERIFIED
+
+Implemented:
+
+- fn_authorizeEngagement
+- Approval Logic
+- Rejection Logic
+- Decision Reasoning
+
+Verified Results:
+
+✅ APPROVED
+
+✅ LOW_CONFIDENCE
+
+✅ LOW_TRACK_QUALITY
+
+✅ LOW_INTERCEPT_QUALITY
+
+✅ TARGET_DEAD
+
+Purpose:
+
+Determine whether a target should be considered
+for engagement.
+
+---
+
+### Phase 2
+Planning Gate
+
+Status:
+✅ VERIFIED
+
+Implemented:
+
+- Authorization gate integrated into
+  fn_planAttack
+
+Verified Behavior:
+
+Denied Contact
+↓
+No Plan Created
+
+Approved Contact
+↓
+Plan Created
+
+Purpose:
+
+Prevent planning resources from being allocated
+to invalid targets.
+
+---
+
+### Phase 3
+Battlefield Value Evaluation
+
+Status:
+✅ VERIFIED
+
+Implemented:
+
+- Threat Validation
+- Track Freshness Validation
+- Distance Validation
+
+Verified Results:
+
+✅ LOW_THREAT
+
+✅ STALE_CONTACT
+
+✅ OUT_OF_RANGE
+
+Purpose:
+
+Determine whether a target is valuable enough
+to justify engagement.
+
+---
+
+### Phase 4
+Engagement Scoring
+
+Status:
+✅ VERIFIED
+
+Implemented:
+
+- engagementScore
+
+Scoring Sources:
+
+- Threat
+- Confidence
+- Track Quality
+- Intercept Quality
+- Freshness
+
+Outputs:
+
+- authorized
+- engagementScore
+- reason
+
+Example:
+
+Target A
+↓
+Score 91
+
+Target B
+↓
+Score 63
+
+Target C
+↓
+Score 42
+
+Purpose:
+
+Provide target ranking information for future
+prioritization systems.
+
+---
+
+### Phase 5
+Target Prioritization
+
+Status:
+🚧 NEXT
 
 Planned Systems:
 
-- fn_evaluateEngagement
-- fn_authorizeEngagement
+- fn_rankTargets
+
+Purpose:
+
+Compare multiple authorized targets and
+determine which target should receive
+resources first.
+
+Target Flow:
+
+Contact List
+↓
+authorizeEngagement
+↓
+engagementScore
+↓
+Sort Descending
+↓
+Highest Priority Target
 
 Success Criteria:
 
-KBCF can determine whether an attack should occur.
+KBCF can select the best target from a set of
+authorized contacts.
 
+---
+
+Questions Answered So Far:
+
+✅ Is this target valid?
+
+✅ Is this target reachable?
+
+✅ Is this target fresh?
+
+✅ Is this target valuable?
+
+✅ Should I engage?
+
+✅ How valuable is this target?
+
+Next Question:
+
+🚧 Which target should I engage first?
 ---
 
 ## Generation 8D
@@ -496,27 +667,11 @@ Battlefield Intelligence Framework
 ---
 
 # Current Frontier
-
 Generation 8C
-Engagement Authorization
 
-Status:
-🚧 IN PROGRESS
+Target Prioritization
 
-Phase 1
-✅ VERIFIED
+Primary Question:
 
-Authorization Logic
-
-Phase 2
-✅ VERIFIED
-
-Planning Gate
-
-Approved Contacts
-↓
-Plans Created
-
-Denied Contacts
-↓
-Plans Blocked
+"Of all authorized targets,
+which one deserves my attention first?"
