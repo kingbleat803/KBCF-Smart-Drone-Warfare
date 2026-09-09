@@ -45,6 +45,9 @@ private _velocity =
         [0,0,0]
     ];
 
+private _targetSpeed =
+    vectorMagnitude _velocity;
+
 private _interceptPosition =
 [
     (_targetPosition # 0) + ((_velocity # 0) * _interceptTime),
@@ -52,12 +55,51 @@ private _interceptPosition =
     (_targetPosition # 2) + ((_velocity # 2) * _interceptTime)
 ];
 
+private _interceptQuality = 100;
+
+private _relativeAdvantage =
+    _droneSpeed - _targetSpeed;
+
+if (_relativeAdvantage <= 0) then
+{
+    _interceptQuality = 0;
+}
+else
+{
+    _interceptQuality =
+        100 - _interceptTime;
+};
+
+if (_interceptQuality < 0) then
+{
+    _interceptQuality = 0;
+};
+
+_contact set
+[
+    "interceptPosition",
+    _interceptPosition
+];
+
+_contact set
+[
+    "interceptTime",
+    _interceptTime
+];
+
+_contact set
+[
+    "interceptQuality",
+    _interceptQuality
+];
+
 [
     "INTERCEPT",
     format
     [
-        "Intercept In %1s At %2",
+        "Time:%1 | Quality:%2 | Position:%3",
         round _interceptTime,
+        round _interceptQuality,
         _interceptPosition
     ]
 ] call KBCF_fnc_log;

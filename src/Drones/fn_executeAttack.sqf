@@ -49,24 +49,29 @@ if (!_valid) exitWith
     _target
 ] call KBCF_fnc_trackTarget;
 
-private _predictedPosition =
-    _target getOrDefault
-    [
-        "predictedPosition",
-        [0,0,0]
-    ];
+private _interceptPosition =
+[
+    _drone,
+    _target
+] call KBCF_fnc_predictIntercept;
+
+_target set
+[
+    "interceptPosition",
+    _interceptPosition
+];
 
 [
     "ATTACK",
     format
     [
-        "Attacking %1 | Predicted Position %2",
+        "Attacking %1 | Intercept Position %2",
         _target getOrDefault
         [
             "classification",
             "UNKNOWN"
         ],
-        _predictedPosition
+        _interceptPosition
     ]
 ] call KBCF_fnc_log;
 

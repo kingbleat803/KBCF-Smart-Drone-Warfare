@@ -50,6 +50,13 @@ private _bestScore = -1;
             100
         ];
 
+    private _interceptQuality =
+        _x getOrDefault
+        [
+            "interceptQuality",
+            100
+        ];
+
     private _distance = 0;
 
     if (!isNull _origin) then
@@ -72,17 +79,25 @@ private _bestScore = -1;
     private _trackFactor =
         _trackQuality / 100;
 
+    private _interceptFactor =
+        _interceptQuality / 100;
+
     private _score =
-        (
-            _threat
-            * _confidence
-            * _freshness
-            * _trackFactor
-        )
-        /
-        (
-            1 + (_distance / 1000)
-        );
+    (
+        _threat
+        *
+        _confidence
+        *
+        _freshness
+        *
+        _trackFactor
+        *
+        _interceptFactor
+    )
+    /
+    (
+        1 + (_distance / 1000)
+    );
 
     private _classification =
         _x getOrDefault
@@ -95,12 +110,13 @@ private _bestScore = -1;
         "TARGETING",
         format
         [
-            "%1 | Threat:%2 | Confidence:%3 | Age:%4 | Quality:%5 | Distance:%6 | Score:%7",
+            "%1 | Threat:%2 | Confidence:%3 | Age:%4 | Track:%5 | Intercept:%6 | Distance:%7 | Score:%8",
             _classification,
             _threat,
             _confidence,
             round _age,
             round _trackQuality,
+            round _interceptQuality,
             round _distance,
             round _score
         ]
