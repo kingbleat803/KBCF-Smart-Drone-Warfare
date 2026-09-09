@@ -54,6 +54,22 @@ private _lastSeen =
 private _trackAge =
     serverTime - _lastSeen;
 
+private _trackQuality = 100;
+
+_trackQuality =
+    _trackQuality - (_trackAge * 2);
+
+if (_velocity isEqualTo [0,0,0]) then
+{
+    _trackQuality =
+        _trackQuality - 20;
+};
+
+if (_trackQuality < 0) then
+{
+    _trackQuality = 0;
+};
+
 _contact set
 [
     "predictedPosition",
@@ -68,6 +84,12 @@ _contact set
 
 _contact set
 [
+    "trackQuality",
+    _trackQuality
+];
+
+_contact set
+[
     "lastTrackUpdate",
     serverTime
 ];
@@ -76,16 +98,15 @@ _contact set
     "TRACKING",
     format
     [
-        "%1 | Last Position:%2 | Predicted Position:%3 | Velocity:%4 | Age:%5",
+        "%1 | Age:%2 | Quality:%3 | Predicted:%4",
         _contact getOrDefault
         [
             "classification",
             "UNKNOWN"
         ],
-        _lastKnownPosition,
-        _predictedPosition,
-        _velocity,
-        round _trackAge
+        round _trackAge,
+        round _trackQuality,
+        _predictedPosition
     ]
 ] call KBCF_fnc_log;
 

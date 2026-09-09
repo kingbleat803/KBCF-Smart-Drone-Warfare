@@ -43,6 +43,13 @@ private _bestScore = -1;
             serverTime
         ];
 
+    private _trackQuality =
+        _x getOrDefault
+        [
+            "trackQuality",
+            100
+        ];
+
     private _distance = 0;
 
     if (!isNull _origin) then
@@ -62,18 +69,20 @@ private _bestScore = -1;
         _freshness = 0;
     };
 
+    private _trackFactor =
+        _trackQuality / 100;
+
     private _score =
-    (
-        _threat
-        *
-        _confidence
-        *
-        _freshness
-    )
-    /
-    (
-        1 + (_distance / 1000)
-    );
+        (
+            _threat
+            * _confidence
+            * _freshness
+            * _trackFactor
+        )
+        /
+        (
+            1 + (_distance / 1000)
+        );
 
     private _classification =
         _x getOrDefault
@@ -86,12 +95,12 @@ private _bestScore = -1;
         "TARGETING",
         format
         [
-            "%1 | Threat:%2 | Confidence:%3 | Age:%4 | Freshness:%5 | Distance:%6 | Score:%7",
+            "%1 | Threat:%2 | Confidence:%3 | Age:%4 | Quality:%5 | Distance:%6 | Score:%7",
             _classification,
             _threat,
             _confidence,
             round _age,
-            _freshness,
+            round _trackQuality,
             round _distance,
             round _score
         ]
