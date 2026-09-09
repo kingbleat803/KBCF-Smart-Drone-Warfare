@@ -34,6 +34,69 @@ private _status =
         "PENDING"
     ];
 
+/*
+    Activate pending plans
+*/
+if (_status isEqualTo "PENDING") then
+{
+    _status = "ACTIVE";
+
+    [
+        "PLAN",
+        "Plan activated"
+    ] call KBCF_fnc_log;
+};
+
+/*
+    Execute active plans
+*/
+if (_status isEqualTo "ACTIVE") then
+{
+    private _actionResult =
+    [
+        player,
+        _contact,
+        _plan
+    ] call KBCF_fnc_executeAction;
+
+    private _completed =
+        _actionResult getOrDefault
+        [
+            "completed",
+            false
+        ];
+
+    private _replanRequired =
+        _actionResult getOrDefault
+        [
+            "replanRequired",
+            false
+        ];
+
+    if (_completed) then
+    {
+        _status = "COMPLETE";
+
+        [
+            "PLAN",
+            "Plan completed"
+        ] call KBCF_fnc_log;
+    };
+
+    if (_replanRequired) then
+    {
+        _status = "FAILED";
+
+        [
+            "PLAN",
+            "Plan failed and requires replanning"
+        ] call KBCF_fnc_log;
+    };
+};
+
+/*
+    Legacy arrival completion check
+*/
 private _arrival =
     _plan getOrDefault
     [
@@ -41,9 +104,20 @@ private _arrival =
         serverTime
     ];
 
-if (serverTime >= _arrival) then
+if
+(
+    (_status isEqualTo "ACTIVE")
+    &&
+    (serverTime >= _arrival)
+)
+then
 {
     _status = "COMPLETE";
+
+    [
+        "PLAN",
+        "Planned arrival reached"
+    ] call KBCF_fnc_log;
 };
 
 _plan set

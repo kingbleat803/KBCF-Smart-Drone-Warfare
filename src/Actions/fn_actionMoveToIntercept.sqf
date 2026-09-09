@@ -24,29 +24,14 @@ createHashMapFromArray
 
 if (isNull _drone) exitWith
 {
-    _result set
-    [
-        "reason",
-        "INVALID_DRONE"
-    ];
-
+    _result set ["reason", "INVALID_DRONE"];
     _result
 };
 
 if (!alive _drone) exitWith
 {
-    _result set
-    [
-        "reason",
-        "DRONE_DESTROYED"
-    ];
-
-    _result set
-    [
-        "replanRequired",
-        true
-    ];
-
+    _result set ["reason", "DRONE_DESTROYED"];
+    _result set ["replanRequired", true];
     _result
 };
 
@@ -59,74 +44,44 @@ private _interceptPosition =
 
 if ((count _interceptPosition) isEqualTo 0) exitWith
 {
-    _result set
-    [
-        "reason",
-        "NO_INTERCEPT_POSITION"
-    ];
-
-    _result set
-    [
-        "replanRequired",
-        true
-    ];
-
+    _result set ["reason", "NO_INTERCEPT_POSITION"];
+    _result set ["replanRequired", true];
     _result
 };
 
-/*
-    Completion check
-*/
 private _distance =
     _drone distance2D _interceptPosition;
 
 private _completionRadius = 25;
 
+/*
+    Objective reached
+*/
 if (_distance <= _completionRadius) exitWith
 {
-    _result set
-    [
-        "success",
-        true
-    ];
-
-    _result set
-    [
-        "completed",
-        true
-    ];
-
-    _result set
-    [
-        "reason",
-        "INTERCEPT_REACHED"
-    ];
+    _result set ["success", true];
+    _result set ["completed", true];
+    _result set ["reason", "INTERCEPT_REACHED"];
 
     [
         "ACTION",
-        "Intercept reached"
+        format
+        [
+            "Intercept reached | Distance:%1",
+            round _distance
+        ]
     ] call KBCF_fnc_log;
 
     _result
 };
 
 /*
-    Move toward intercept
+    Continue movement
 */
-
 (group _drone) move _interceptPosition;
 
-_result set
-[
-    "success",
-    true
-];
-
-_result set
-[
-    "reason",
-    "MOVING_TO_INTERCEPT"
-];
+_result set ["success", true];
+_result set ["reason", "MOVING_TO_INTERCEPT"];
 
 [
     "ACTION",
@@ -136,4 +91,6 @@ _result set
         round _distance,
         _interceptPosition
     ]
-] call KBCF
+] call KBCF_fnc_log;
+
+_result
