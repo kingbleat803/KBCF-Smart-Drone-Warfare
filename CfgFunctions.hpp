@@ -67,6 +67,7 @@ class CfgFunctions
             class planAttack {};
             class executePlan {};
             class authorizeEngagement {};
+            class rankTargets {};
         };
 
         class Actions

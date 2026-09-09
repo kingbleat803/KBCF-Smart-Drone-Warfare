@@ -462,10 +462,11 @@ Verified:
 
 ### Phase 5
 
+Phase 5
+
 Target Prioritization
 
-Status:
-🚧 NEXT
+✅
 
 Planned Systems:
 
@@ -724,11 +725,12 @@ Battlefield Intelligence Framework
 ---
 
 # Current Frontier
-Generation 8C
+Generation 8D
 
-Target Prioritization
+Action Expansion
 
 Primary Question:
 
-"Of all authorized targets,
-which one deserves my attention first?"
+"I have chosen the best target.
+
+What should I do next?"
