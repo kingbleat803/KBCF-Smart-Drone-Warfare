@@ -332,7 +332,122 @@ Success Criteria:
 Autonomous drones can perform mission-specific actions.
 
 ---
+# Generation 9.5
 
+Performance & Scalability
+
+Status:
+🚧 PLANNED
+
+Purpose:
+
+Validate that KBCF can scale from a small number of autonomous drones
+to large battlefield deployments without unacceptable server impact.
+
+Rationale:
+
+KBCF is intentionally built around shared battlefield intelligence,
+planning, and action dispatch.
+
+Before large-scale swarm behaviors are introduced, profiling should
+verify the performance characteristics of:
+
+- Blackboard operations
+- Contact storage
+- Prediction systems
+- Planning systems
+- Action dispatch
+- Multi-drone coordination
+
+Objectives:
+
+- Profile scheduler execution time
+- Measure blackboard growth under load
+- Measure contact processing costs
+- Measure intercept prediction costs
+- Measure plan lifecycle costs
+- Measure action execution costs
+- Identify scheduler bottlenecks
+- Identify high-frequency operations
+- Validate server-authoritative architecture at scale
+
+Test Scenarios:
+
+### Small Scale
+
+- 1 drone
+- 10 contacts
+
+Target:
+
+Baseline performance measurement.
+
+### Medium Scale
+
+- 10 drones
+- 50 contacts
+
+Target:
+
+Normal battlefield deployment.
+
+### Large Scale
+
+- 25 drones
+- 100 contacts
+
+Target:
+
+Stress testing.
+
+### Swarm Scale
+
+- 50+ drones
+- 100+ contacts
+
+Target:
+
+Determine practical architecture limits.
+
+Success Criteria:
+
+KBCF can maintain acceptable server performance while:
+
+- Tracking contacts
+- Predicting intercepts
+- Creating plans
+- Executing actions
+- Coordinating multiple drones
+
+Optimization Opportunities:
+
+Potential future improvements include:
+
+- Scheduler frequency tuning
+- Contact update batching
+- Blackboard cleanup optimization
+- Plan cache optimization
+- Target-selection throttling
+- Multi-drone coordination optimization
+
+Questions To Answer:
+
+How many contacts can KBCF maintain?
+
+How many active plans can KBCF manage?
+
+How many drones can be coordinated simultaneously?
+
+Where are the largest execution costs?
+
+What subsystem becomes the limiting factor?
+
+Deliverable:
+
+A documented performance profile of the KBCF architecture with
+recommended scaling limits and optimization targets.
+
+---
 # Generation 10
 
 Multi-Drone Coordination
@@ -382,12 +497,26 @@ Battlefield Intelligence Framework
 
 # Current Frontier
 
-Generation 8B
+Generation 8C
+Engagement Authorization
 
-Real Drone Integration
+Status:
+🚧 IN PROGRESS
 
-Primary Question:
+Phase 1
+✅ VERIFIED
 
-"I have a completed plan.
+Authorization Logic
 
-Can the assigned drone execute it autonomously?"
+Phase 2
+✅ VERIFIED
+
+Planning Gate
+
+Approved Contacts
+↓
+Plans Created
+
+Denied Contacts
+↓
+Plans Blocked
