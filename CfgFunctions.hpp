@@ -64,6 +64,7 @@ class CfgFunctions
             file = "src\Planning";
 
             class planAttack {};
+            class executePlan {};
         };
     };
 };
