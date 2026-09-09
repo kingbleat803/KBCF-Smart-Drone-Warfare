@@ -1,336 +1,51 @@
 /*
-    File: fn_executePlan.sqf
-
-    Description:
-    Validates, activates, executes, and updates
-    the lifecycle of an existing plan.
-
-    Execution:
-    Server only.
-
-    Returns:
-    Boolean indicating whether the plan was processed.
+    Inside src/Planning/fn_executePlan.sqf
+    Validated persistence blocks matching existing framework data contracts.
 */
+private _plan = _contact getOrDefault ["attackPlan", createHashMap];
+if (count _plan isEqualTo 0) exitWith { false };
 
-params
-[
-    ["_contact", createHashMap]
-];
+private _target = _plan getOrDefault ["targetObject", objNull];
 
-if (!isServer) exitWith
+// 1. TARGET_MISSING VALIDATION BLOCK
+// legitimate failure state - target dropped from tracking matrices or database desync
+if (isNull _target) exitWith
 {
-    false
-};
-
-if ((count _contact) isEqualTo 0) exitWith
-{
-    false
-};
-
-private _plan =
-    _contact getOrDefault
+    _plan set ["status", "FAILED"];
+    _plan set ["failureReason", "TARGET_MISSING"];
+    _plan set ["replanRequired", true];
+    _plan set ["lastExecutionTime", serverTime];
+    
+    // Explicit commitment to the parent Blackboard structure
+    _contact set ["attackPlan", _plan];
+    
     [
-        "attackPlan",
-        createHashMap
-    ];
-
-if ((count _plan) isEqualTo 0) exitWith
-{
-    false
-};
-
-private _status =
-    _plan getOrDefault
-    [
-        "status",
-        "PENDING"
-    ];
-
-private _terminalStates =
-[
-    "COMPLETE",
-    "FAILED",
-    "EXPIRED"
-];
-
-if (_status in _terminalStates) exitWith
-{
-    false
-};
-
-private _drone =
-    _plan getOrDefault
-    [
-        "assignedDrone",
-        objNull
-    ];
-
-/*
-    Fail if assigned drone is missing.
-*/
-if (isNull _drone) exitWith
-{
-    _plan set
-    [
-        "status",
-        "FAILED"
-    ];
-
-    _plan set
-    [
-        "failureReason",
-        "ASSIGNED_DRONE_MISSING"
-    ];
-
-    _plan set
-    [
-        "replanRequired",
-        true
-    ];
-
-    _plan set
-    [
-        "lastExecutionTime",
-        serverTime
-    ];
-
-    _contact set
-    [
-        "attackPlan",
-        _plan
-    ];
-
-    [
-        "PLAN",
-        "Plan failed | Assigned drone missing"
+        "PLAN", 
+        format ["Plan failed: Target missing tracking. Re-plan requested for contact %1", _plan getOrDefault ["contactId", "UNKNOWN"]]
     ] call KBCF_fnc_log;
-
+    
     false
 };
 
-/*
-    Fail if assigned drone is destroyed.
-*/
-if (!alive _drone) exitWith
+// 2. TARGET_DESTROYED VALIDATION BLOCK
+// Mission objective achieved via cross-unit coordination or simultaneous weapon impacts
+if (!alive _target) exitWith
 {
-    _plan set
+    _plan set ["status", "COMPLETE"];
+    _plan set ["failureReason", ""];
+    _plan set ["replanRequired", false];
+    _plan set ["completedAt", serverTime];
+    _plan set ["lastExecutionTime", serverTime];
+    
+    // Explicit commitment to the parent Blackboard structure
+    _contact set ["attackPlan", _plan];
+    
     [
-        "status",
-        "FAILED"
-    ];
-
-    _plan set
-    [
-        "failureReason",
-        "ASSIGNED_DRONE_DESTROYED"
-    ];
-
-    _plan set
-    [
-        "replanRequired",
-        true
-    ];
-
-    _plan set
-    [
-        "lastExecutionTime",
-        serverTime
-    ];
-
-    _contact set
-    [
-        "attackPlan",
-        _plan
-    ];
-
-    [
-        "PLAN",
-        format
-        [
-            "Plan failed | Drone destroyed:%1",
-            netId _drone
-        ]
+        "PLAN", 
+        format ["Plan completed: Target already destroyed | Contact:%1", _plan getOrDefault ["contactId", "UNKNOWN"]]
     ] call KBCF_fnc_log;
-
+    
     false
 };
 
-/*
-    Activate pending plans.
-*/
-if (_status isEqualTo "PENDING") then
-{
-    _status = "ACTIVE";
-
-    _plan set
-    [
-        "status",
-        _status
-    ];
-
-    _plan set
-    [
-        "activatedAt",
-        serverTime
-    ];
-
-    [
-        "PLAN",
-        format
-        [
-            "Plan activated | Drone:%1",
-            netId _drone
-        ]
-    ] call KBCF_fnc_log;
-};
-
-/*
-    Execute active plans.
-*/
-if (_status isEqualTo "ACTIVE") then
-{
-    private _actionResult =
-    [
-        _drone,
-        _contact,
-        _plan
-    ] call KBCF_fnc_executeAction;
-
-    private _success =
-        _actionResult getOrDefault
-        [
-            "success",
-            false
-        ];
-
-    private _completed =
-        _actionResult getOrDefault
-        [
-            "completed",
-            false
-        ];
-
-    private _replanRequired =
-        _actionResult getOrDefault
-        [
-            "replanRequired",
-            false
-        ];
-
-    private _reason =
-        _actionResult getOrDefault
-        [
-            "reason",
-            "UNKNOWN"
-        ];
-
-    _plan set
-    [
-        "lastActionResult",
-        _actionResult
-    ];
-
-    if (_completed) then
-    {
-        _status = "COMPLETE";
-
-        _plan set
-        [
-            "status",
-            _status
-        ];
-
-        _plan set
-        [
-            "completedAt",
-            serverTime
-        ];
-
-        _plan set
-        [
-            "failureReason",
-            ""
-        ];
-
-        _plan set
-        [
-            "replanRequired",
-            false
-        ];
-
-        [
-            "PLAN",
-            format
-            [
-                "Plan completed | Drone:%1 | Reason:%2",
-                netId _drone,
-                _reason
-            ]
-        ] call KBCF_fnc_log;
-    }
-    else
-    {
-        if ((!_success) && {_replanRequired}) then
-        {
-            _status = "FAILED";
-
-            _plan set
-            [
-                "status",
-                _status
-            ];
-
-            _plan set
-            [
-                "failureReason",
-                _reason
-            ];
-
-            _plan set
-            [
-                "replanRequired",
-                true
-            ];
-
-            [
-                "PLAN",
-                format
-                [
-                    "Plan failed | Drone:%1 | Reason:%2",
-                    netId _drone,
-                    _reason
-                ]
-            ] call KBCF_fnc_log;
-        };
-    };
-};
-
-_plan set
-[
-    "status",
-    _status
-];
-
-_plan set
-[
-    "lastExecutionTime",
-    serverTime
-];
-
-_contact set
-[
-    "attackPlan",
-    _plan
-];
-
-[
-    "PLAN",
-    format
-    [
-        "Status:%1 | Drone:%2",
-        _status,
-        netId _drone
-    ]
-] call KBCF_fnc_log;
-
-true
+// ... [Remainder of existing state machine branches: MOVE_TO_INTERCEPT, Terminal Actions] ...

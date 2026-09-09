@@ -74,84 +74,97 @@ if (_actionType isEqualTo "") exitWith
     ]
 ] call KBCF_fnc_log;
 
-private _result = createHashMap;
-
-/*
-    Dispatch action.
-*/
-
-switch (_actionType) do
+private _result = switch (_actionType) do
 {
+    /*
+        Existing Action Set
+    */
+
     case "MOVE_TO_INTERCEPT":
     {
-        _result =
         [
             _drone,
             _contact,
             _plan
-        ] call KBCF_fnc_actionMoveToIntercept;
+        ] call KBCF_fnc_actionMoveToIntercept
     };
 
     case "OBSERVE":
     {
-        _result =
         [
             _drone,
             _contact,
             _plan
-        ] call KBCF_fnc_actionObserve;
+        ] call KBCF_fnc_actionObserve
     };
 
     case "TRACK":
     {
-        _result =
         [
             _drone,
             _contact,
             _plan
-        ] call KBCF_fnc_actionTrack;
+        ] call KBCF_fnc_actionTrack
     };
 
     case "SHADOW":
     {
-        _result =
         [
             _drone,
             _contact,
             _plan
-        ] call KBCF_fnc_actionShadow;
+        ] call KBCF_fnc_actionShadow
     };
 
     case "REPOSITION":
     {
-        _result =
         [
             _drone,
             _contact,
             _plan
-        ] call KBCF_fnc_actionReposition;
+        ] call KBCF_fnc_actionReposition
     };
 
-    case "ABORT":
+    /*
+        Generation 9 Terminal Actions
+    */
+
+    case "ATTACK":
     {
-        _result =
         [
             _drone,
             _contact,
             _plan
-        ] call KBCF_fnc_actionAbort;
+        ] call KBCF_fnc_actionAttack
+    };
+
+    case "GRENADE_DROP":
+    {
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_actionGrenadeDrop
+    };
+
+    case "RECON":
+    {
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_actionRecon
     };
 
     default
     {
-        _result =
         createHashMapFromArray
         [
             ["success", false],
             ["completed", false],
             ["replanRequired", true],
             ["reason", "UNKNOWN_ACTION"]
-        ];
+        ]
     };
 };
 
