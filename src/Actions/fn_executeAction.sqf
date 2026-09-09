@@ -2,8 +2,11 @@
     File: fn_executeAction.sqf
 
     Description:
-    Executes the action associated with
-    an active plan.
+    Dispatches actions to the appropriate
+    action handler.
+
+    Returns:
+    Action Result HashMap.
 */
 
 params
@@ -13,68 +16,95 @@ params
     ["_plan", createHashMap]
 ];
 
-private _result =
+private _failure =
 createHashMapFromArray
 [
     ["success", false],
     ["completed", false],
-    ["replanRequired", false],
-    ["reason", "NO_ACTION"]
+    ["replanRequired", true],
+    ["reason", "UNKNOWN"]
 ];
 
 if (isNull _drone) exitWith
 {
-    _result set
+    _failure set
     [
         "reason",
         "INVALID_DRONE"
     ];
 
-    _result
+    _failure
 };
 
 if ((count _plan) isEqualTo 0) exitWith
 {
-    _result set
+    _failure set
     [
         "reason",
         "INVALID_PLAN"
     ];
 
-    _result
+    _failure
 };
 
 private _actionType =
     _plan getOrDefault
     [
         "actionType",
-        "MOVE_TO_INTERCEPT"
+        ""
     ];
 
-switch (_actionType) do
+if (_actionType isEqualTo "") exitWith
 {
-    case "MOVE_TO_INTERCEPT":
-    {
-        _result =
-        [
-            _drone,
-            _contact,
-            _plan
-        ] call KBCF_fnc_actionMoveToIntercept;
-    };
+    _failure set
+    [
+        "reason",
+        "NO_ACTION_TYPE"
+    ];
 
-    default
-    {
-        _result set
-        [
-            "reason",
-            format
-            [
-                "UNKNOWN_ACTION:%1",
-                _actionType
-            ]
-        ];
-    };
+    _failure
 };
+
+[
+    "ACTION",
+    format
+    [
+        "Executing Action:%1",
+        _actionType
+    ]
+] call KBCF_fnc_log;
+
+private _result =
+    switch (_actionType) do
+    {
+        case "MOVE_TO_INTERCEPT":
+        {
+            [
+                _drone,
+                _contact,
+                _plan
+            ] call KBCF_fnc_actionMoveToIntercept
+        };
+
+        case "OBSERVE":
+        {
+            [
+                _drone,
+                _contact,
+                _plan
+            ] call KBCF_fnc_actionObserve
+        };
+
+        default
+        {
+            createHashMapFromArray
+            [
+                ["success", false],
+                ["completed", false],
+                ["replanRequired", true],
+                ["reason", "UNKNOWN_ACTION"]
+            ]
+        };
+    };
 
 _result
