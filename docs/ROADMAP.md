@@ -306,7 +306,7 @@ Result:
 Engagement Authorization
 
 Status:
-🚧 PHASE 5 NEXT
+✅ VERIFIED
 
 Purpose:
 
@@ -533,10 +533,10 @@ Phase 3
 ✅ SHADOW
 
 Phase 4
-🚧 REPOSITION
+✅ VERIFIED
 
 Phase 5
-🔜 ABORT
+✅ Abort
 
 Phase 6
 🔜 ATTACK

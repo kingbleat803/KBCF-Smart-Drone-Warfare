@@ -80,6 +80,7 @@ class CfgFunctions
             class actionTrack {};
             class actionShadow {};
             class actionReposition {};
+            class actionAbort {};
         };
     };
 };

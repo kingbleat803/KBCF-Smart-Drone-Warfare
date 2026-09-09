@@ -720,24 +720,30 @@ Should I hold?
 Should I abort?
 
 ---
+Generation 8D
 
-Generation 8C
+Action Expansion
 
-🚧 Tactical Actions
+Status:
+🚧 FINAL PHASE
 
-Future Action Types:
+Phase 1
+✅ OBSERVE
 
-ATTACK
+Phase 2
+✅ TRACK
 
-OBSERVE
+Phase 3
+✅ SHADOW
 
-TRACK
+Phase 4
+✅ REPOSITION
 
-SHADOW
+Phase 5
+✅ ABORT
 
-REPOSITION
-
-ABORT
+Phase 6
+🚧 ATTACK
 
 ---
 
