@@ -57,6 +57,7 @@ class CfgFunctions
             class processContact {};
             class reconScan {};
             class reassignTarget {};
+            class registerDrone {};
         };
 
         class Planning
