@@ -83,6 +83,8 @@ class CfgFunctions
             class actionReposition {};
             class actionAbort {};
             class actionRecon {};
+            class actionAttack {};
+            class actionGrenadeDrop {};
         };
     };
 };
