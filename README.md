@@ -1,4 +1,7 @@
-# KBCF Smart Drone Warfare
+<img width="1774" height="887" alt="KBCFSD" src="https://github.com/user-attachments/assets/0cea4d1d-803d-45f3-973d-f4cd4e7ff0a0" />
+
+
+ # KBCF Smart Drone Warfare
 
 KingBleat's Custom Framework (KBCF) Smart Drone Warfare is an open-source Arma 3 autonomous battlefield intelligence and drone coordination project.
 
