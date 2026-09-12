@@ -85,3 +85,19 @@ What invokes the chain repeatedly?
 
 Missing orchestration can make perfectly working downstream systems
 appear broken.
+
+IMPORTANT
+
+KBCF may have entered a doctrine-first phase.
+
+Before creating new managers, owners, or systems:
+
+Ask:
+"What should happen?"
+
+not:
+
+"Who owns it?"
+
+See Development State for the full
+Doctrine-Driven Framework Evolution notes.
