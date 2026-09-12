@@ -39,6 +39,75 @@ private _terminalStates =
 
 while {true} do
 {
+    /*
+    Front-half battlefield heartbeat.
+*/
+{
+    private _side = _x;
+
+    private _sideRegistry =
+        KBCF_Drones getOrDefault
+        [
+            _side,
+            createHashMap
+        ];
+
+    private _availableDrones = [];
+
+    {
+        private _record = _y;
+
+        private _drone =
+            _record getOrDefault
+            [
+                "object",
+                objNull
+            ];
+
+        if (!isNull _drone && {alive _drone}) then
+        {
+            private _assignedTarget =
+                _drone getVariable
+                [
+                    "KBCF_AssignedTarget",
+                    createHashMap
+                ];
+
+            if ((count _assignedTarget) isEqualTo 0) then
+            {
+                _availableDrones pushBack _drone;
+
+                private _profile =
+                    _drone getVariable
+                    [
+                        "KBCF_DroneProfile",
+                        "UNKNOWN"
+                    ];
+
+                if (_profile isEqualTo "SCOUT") then
+                {
+                    [
+                        _drone,
+                        1000
+                    ] call KBCF_fnc_reconScan;
+                };
+            };
+        };
+    } forEach _sideRegistry;
+
+    if ((count _availableDrones) > 0) then
+    {
+        [
+            _side,
+            _availableDrones
+        ] call KBCF_fnc_updateBattlefield;
+    };
+
+    [
+        _side
+    ] call KBCF_fnc_cleanupContacts;
+
+} forEach [west, east, independent];
     {
         private _side = _x;
 

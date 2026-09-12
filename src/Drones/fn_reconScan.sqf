@@ -28,7 +28,7 @@ nearestObjects
             side _drone,
             _drone,
             _x
-        ] call KBCF_fnc_publishContact;
+        ] call KBCF_fnc_processContact;
     };
 }
 forEach _targets;

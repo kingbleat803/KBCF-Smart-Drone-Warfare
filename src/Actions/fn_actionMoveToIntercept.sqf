@@ -384,12 +384,76 @@ if (!local _driver) exitWith
     _result
 };
 
-_droneGroup move _interceptPosition;
+/*
+    Physical UAV lifecycle handoff.
+
+    A valid movement plan does not automatically make a
+    grounded UAV start its engine or take off.
+*/
+
+if (!isEngineOn _drone) then
+{
+    _drone engineOn true;
+
+    [
+        "ACTION",
+        format
+        [
+            "Engine started | Drone:%1",
+            netId _drone
+        ]
+    ] call KBCF_fnc_log;
+};
+
+private _movementPosition =
+    +_interceptPosition;
+
+/*
+    Air assets require a flight altitude in order to
+    physically execute movement.
+*/
+if (_drone isKindOf "Air") then
+{
+    private _flightHeight = 50;
+
+    _drone flyInHeight
+    [
+        _flightHeight,
+        true
+    ];
+
+    if ((count _movementPosition) < 3) then
+    {
+        _movementPosition pushBack _flightHeight;
+    }
+    else
+    {
+        _movementPosition set
+        [
+            2,
+            _flightHeight
+        ];
+    };
+};
+
+_droneGroup move _movementPosition;
 
 _result set
 [
     "success",
     true
+];
+
+_result set
+[
+    "completed",
+    false
+];
+
+_result set
+[
+    "replanRequired",
+    false
 ];
 
 _result set
@@ -402,10 +466,11 @@ _result set
     "ACTION",
     format
     [
-        "Movement requested | Drone:%1 | Distance:%2 | Position:%3",
+        "Movement requested | Drone:%1 | Distance:%2 | Position:%3 | Engine:%4",
         netId _drone,
         round _distance,
-        _interceptPosition
+        _movementPosition,
+        isEngineOn _drone
     ]
 ] call KBCF_fnc_log;
 

@@ -2,15 +2,9 @@
     File: fn_planAttack.sqf
 
     Description:
-    Generates a multi-stage state machine attack plan from the current
-    target intelligence, mapping drone profiles, target classifications,
-    and raw object references directly into the plan.
-
+    Prepares target intelligence and creates a multi-stage plan.
     Execution:
-    Intended to run on the server.
-
-    Returns:
-    Attack plan HashMap.
+    Server only.
 */
 
 params
@@ -35,7 +29,71 @@ if ((count _contact) isEqualTo 0) exitWith
 };
 
 /*
-    Engagement Authorization Gate
+    Prepare the contact before authorization.
+*/
+private _tracked =
+[
+    _contact
+] call KBCF_fnc_trackTarget;
+
+if (!_tracked) exitWith
+{
+    [
+        "ATTACK",
+        "Plan not created | Contact tracking failed"
+    ] call KBCF_fnc_log;
+
+    createHashMap
+};
+
+private _interceptPosition =
+[
+    _drone,
+    _contact
+] call KBCF_fnc_predictIntercept;
+
+private _interceptTime =
+    _contact getOrDefault
+    [
+        "interceptTime",
+        -1
+    ];
+
+private _interceptQuality =
+    _contact getOrDefault
+    [
+        "interceptQuality",
+        0
+    ];
+
+if (_interceptTime <= 0) exitWith
+{
+    [
+        "ATTACK",
+        "Plan not created | No valid intercept"
+    ] call KBCF_fnc_log;
+
+    createHashMap
+};
+
+/*
+    Store actual drone-to-contact distance for authorization.
+*/
+private _contactPosition =
+    _contact getOrDefault
+    [
+        "position",
+        [0,0,0]
+    ];
+
+_contact set
+[
+    "distance",
+    _drone distance2D _contactPosition
+];
+
+/*
+    Authorization now receives a fully prepared contact.
 */
 private _authorization =
 [
@@ -67,42 +125,6 @@ if (!_authorized) exitWith
     createHashMap
 };
 
-/*
-    Predict intercept
-*/
-private _interceptPosition =
-[
-    _drone,
-    _contact
-] call KBCF_fnc_predictIntercept;
-
-private _interceptTime =
-    _contact getOrDefault
-    [
-        "interceptTime",
-        -1
-    ];
-
-private _interceptQuality =
-    _contact getOrDefault
-    [
-        "interceptQuality",
-        0
-    ];
-
-if (_interceptTime <= 0) exitWith
-{
-    [
-        "ATTACK",
-        "Plan not created because no valid intercept exists"
-    ] call KBCF_fnc_log;
-
-    createHashMap
-};
-
-/*
-    Drone profile
-*/
 private _droneProfile =
     _drone getVariable
     [
@@ -112,9 +134,6 @@ private _droneProfile =
 
 private _terminalActionType = "ATTACK";
 
-/*
-    Profile Mapping
-*/
 switch (_droneProfile) do
 {
     case "FPV_STRIKE":
@@ -141,23 +160,13 @@ switch (_droneProfile) do
 private _plannedArrival =
     serverTime + _interceptTime;
 
-private _routeQuality =
-    _interceptQuality;
-
-/*
-    Create attack plan
-*/
 private _attackPlan =
 createHashMapFromArray
 [
     ["planType", "ATTACK"],
-
     ["actionType", "MOVE_TO_INTERCEPT"],
-
     ["terminalActionType", _terminalActionType],
-
     ["droneProfile", _droneProfile],
-
     [
         "targetClassification",
         _contact getOrDefault
@@ -166,7 +175,6 @@ createHashMapFromArray
             "UNKNOWN"
         ]
     ],
-
     [
         "targetObject",
         _contact getOrDefault
@@ -175,9 +183,7 @@ createHashMapFromArray
             objNull
         ]
     ],
-
     ["assignedDrone", _drone],
-
     [
         "contactId",
         _contact getOrDefault
@@ -186,35 +192,20 @@ createHashMapFromArray
             ""
         ]
     ],
-
     ["status", "PENDING"],
-
     ["createdAt", serverTime],
-
     ["activatedAt", -1],
-
     ["completedAt", -1],
-
     ["lastExecutionTime", -1],
-
     ["replanRequired", false],
-
     ["failureReason", ""],
-
     ["interceptPosition", _interceptPosition],
-
     ["interceptTime", _interceptTime],
-
     ["interceptQuality", _interceptQuality],
-
     ["plannedArrival", _plannedArrival],
-
-    ["routeQuality", _routeQuality]
+    ["routeQuality", _interceptQuality]
 ];
 
-/*
-    Persist on Blackboard contact
-*/
 _contact set
 [
     "attackPlan",
@@ -233,3 +224,4 @@ _contact set
 ] call KBCF_fnc_log;
 
 _attackPlan
+
