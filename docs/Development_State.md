@@ -186,48 +186,70 @@ ISR restoration remain undefined.
 FRAMEWORK ASSESSMENT
 ==================================================
 
-Milestone:
+FPV_STRIKE Runtime Verification
 
-Transition from Core Architecture Verification
-to Doctrine-Driven Framework Evolution.
+Setup:
+- OPFOR UAV named drone1
+- Drone manually registered as FPV_STRIKE
+- Hostile vehicle published as an EAST Blackboard contact
+- Commander assignment manually invoked
 
-Observation:
+Registration:
+[drone1, east, "FPV_STRIKE"] call KBCF_fnc_registerDrone;
 
-Most recent runtime and repository audits indicate
-that core framework architecture has reached a
-higher level of maturity.
+Result:
+- Registration returned true
+- Assignment count returned 1
+- Drone physically moved toward the assigned target
 
-Recent investigations repeatedly revealed that
-many perceived "missing systems" were actually
-undecided doctrine rather than absent architecture.
+Verified execution:
+- MOVE_TO_INTERCEPT executed
+- INTERCEPT_REACHED occurred
+- Plan transitioned to ATTACK
+- KBCF_fnc_actionAttack executed
+- SatchelCharge_Remote_Ammo_Scripted was created
+- Drone remained hovering at shared intercept/cruise altitude
+- No physical impact with target was observed
+- Warhead event occurred near the target
+- Vehicle was destroyed
+- Drone was destroyed
+- Plan reached COMPLETE
+- Reservation was released
+- Scheduler performed terminal cleanup
 
-Framework questions are increasingly shifting from:
+Architectural Discovery
 
-"What is missing?"
+Observed behavior does not match expected FPV doctrine.
 
-to:
+Runtime suggests FPV_STRIKE currently inherits
+shared MOVE_TO_INTERCEPT behavior used by other
+drone profiles.
 
-"What behavior is desired?"
-
-Current Governance Model:
-
-Runtime
+Observed result:
+Hover
 ↓
-Doctrine
+ATTACK
 ↓
-Architecture
+Detonation
 ↓
-Implementation
-↓
-Runtime Verification
-↓
-Documentation
+COMPLETE
 
-Status:
+not:
 
-Architecture remains active and will continue
-to evolve.
+Impact
+↓
+Detonation
+↓
+COMPLETE
 
-However, future development is expected to become
-increasingly doctrine-driven rather than
-architecture-driven.
+OPEN INVESTIGATION
+
+INTERCEPT_REACHED currently occurs at:
+
+private _completionRadius = 25;
+
+This variable controls transition from
+MOVE_TO_INTERCEPT to terminalActionType.
+
+The effect of this shared lifecycle parameter
+on FPV behavior has not yet been verified.

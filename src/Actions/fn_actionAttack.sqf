@@ -149,7 +149,13 @@ private _targetPosition =
 private _distance =
     _drone distance2D _targetPosition;
 
-private _detonationRadius = 8;
+/*
+    Tighter than the previous 8m generic-target radius. An
+    armor-defeating charge needs to actually be on the hull,
+    not merely nearby, so the drone is required to close all
+    the way in before detonation is permitted.
+*/
+private _detonationRadius = 5;
 
 if (_distance > _detonationRadius) exitWith
 {
@@ -174,16 +180,55 @@ if (_distance > _detonationRadius) exitWith
 };
 
 /*
-    Detonation. A standalone explosive prop is spawned at the
-    drone's own position so the blast is simulated through the
-    engine's normal ammo/damage model rather than an instant,
-    unconditional kill of only the recorded target reference;
-    the drone is then destroyed in the same event.
-*/
-private _detonationPosition =
-    getPosATL _drone;
+    Detonation. The warhead class is configurable per-plan
+    (fn_planAttack can write "warheadClass" into the plan for
+    a given profile); if it does not, this falls back to a
+    demolition-charge class. Charges in this family are
+    documented by Bohemia specifically as being intended for
+    scripted detonation via setDamage 1, and are the standard
+    vanilla vehicle-killing explosive - unlike the previous
+    Bo_GB6 frag grenade, this is sized to actually destroy
+    armor, not just harass infantry.
 
-"Bo_GB6" createVehicle _detonationPosition;
+    The charge is attached directly to the target rather than
+    placed at the drone's own position, so the impact point is
+    the hull itself. The drone is destroyed in the same event.
+*/
+private _warheadClassname =
+    _plan getOrDefault
+    [
+        "warheadClass",
+        "SatchelCharge_Remote_Ammo_Scripted"
+    ];
+
+private _warhead =
+    _warheadClassname createVehicle _targetPosition;
+
+if (isNull _warhead) exitWith
+{
+    _result set ["reason", "WARHEAD_CREATE_FAILED"];
+    _result set ["replanRequired", true];
+
+    [
+        "ATTACK",
+        format
+        [
+            "Kamikaze detonation failed | Reason:WARHEAD_CREATE_FAILED | Drone:%1 | WarheadClass:%2",
+            netId _drone,
+            _warheadClassname
+        ]
+    ] call KBCF_fnc_log;
+
+    _result
+};
+
+_warhead attachTo
+[
+    _target,
+    [0, 0, 0.2]
+];
+
+_warhead setDamage 1;
 
 _drone setDamage 1;
 
@@ -195,9 +240,10 @@ _result set ["reason", "KAMIKAZE_DETONATED"];
     "ATTACK",
     format
     [
-        "Kamikaze detonated | Drone:%1 | Position:%2 | Distance:%3",
+        "Kamikaze detonated | Drone:%1 | Target:%2 | WarheadClass:%3 | Distance:%4",
         netId _drone,
-        _detonationPosition,
+        netId _target,
+        _warheadClassname,
         round _distance
     ]
 ] call KBCF_fnc_log;
