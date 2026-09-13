@@ -1,14 +1,3 @@
-/*
-    File: fn_executeAction.sqf
-
-    Description:
-    Dispatches actions to the appropriate
-    action handler.
-
-    Returns:
-    Action Result HashMap.
-*/
-
 params
 [
     ["_drone", objNull],
@@ -76,11 +65,16 @@ if (_actionType isEqualTo "") exitWith
 
 private _result = switch (_actionType) do
 {
-    /*
-        Existing Action Set
-    */
+    //
+        //Existing Action Set
+    //
 
-    case "MOVE_TO_INTERCEPT":
+     ["replanRequired", true],
+    ["reason", "UNKNOWN"]
+];
+
+if (isNull _drone) exitWith
+{   case "MOVE_TO_INTERCEPT":
     {
         [
             _drone,
