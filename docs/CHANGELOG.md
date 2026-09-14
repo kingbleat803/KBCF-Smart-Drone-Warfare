@@ -1,3 +1,27 @@
+KBCF Framework
+Operational
+
+Core Orchestration
+Verified
+
+Documentation
+Current
+
+Recovery Process
+Current
+
+SHADOW
+Implemented
+
+Controller Phase
+Ready
+
+Asset Lifecycle Investigation
+Identified
+
+Current Frontier
+Doctrine & Asset Evolution
+
 Milestone: Autonomous Orchestration + Physical UAV Movement
 - Added scheduler battlefield heartbeat
 - Restored autonomous contact processing
