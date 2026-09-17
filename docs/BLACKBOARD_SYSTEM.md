@@ -1,4 +1,16 @@
+ Use this document as the source-of-truth explanation of what KBCF knows, how that knowledge changes, and what the Blackboard does not control. 
 
+# KBCF Blackboard System
+
+## Purpose
+
+The Blackboard is KBCF's shared battlefield memory and intelligence layer.
+
+It allows sensors, commanders, planners, and autonomous assets to work from the same contact information instead of maintaining isolated target lists.
+
+The Blackboard is the brain's memory, not the complete brain by itself.
+
+---
 
 ## Core Model
 
