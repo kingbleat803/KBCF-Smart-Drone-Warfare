@@ -1,240 +1,359 @@
-SCOUT = Persistent ISR Asset
+Buddy, if I were rewriting Doctrine.md from scratch today, knowing everything we discovered in this session, I would make it much more timeless and much less implementation-specific.
 
-The SCOUT is the eyes of KBCF.
+The Welcome Back Notes should answer:
 
-A SCOUT is not a recon action.
+Where are we?
 
-A SCOUT is not a weapon.
 
-A SCOUT exists to create and maintain
-battlefield awareness.
+Doctrine.md should answer:
 
-Responsibilities
----------------
-Observe
-Track
-Validate
-Publish Intelligence
-Support Strike Assets
-Perform Battle Damage Assessment
+How do we make decisions?
 
-Life Cycle
-----------
-PATROL
-↓
-DETECT
-↓
-VALIDATE
-↓
-PUBLISH
-↓
-HANDOFF
-↓
-SHADOW
-↓
-BDA
-↓
-PATROL
 
-Target Service Cycle
---------------------
-SCOUT
-↓
-Patrol Sector
-↓
-Find Contact
-↓
-Hand Off To Strike Asset
-↓
-Shadow Target
-↓
-Provide Battle Damage Assessment
-↓
-Resume Patrol
+I'd write something like this:
 
-Important Doctrine Principle
-----------------------------
+KBCF Doctrine
+Purpose
 
-Attack Complete
-≠
-Target Service Complete
+KBCF is an Arma 3 gameplay framework that creates autonomous battlefield behavior through virtual intelligence gathering, planning, assignment, execution, verification, and retasking.
 
-If the target survives:
+The goal of KBCF is not merely to execute actions.
 
-Maintain observation
+The goal of KBCF is to create believable battlefield behavior that players can observe and interact with.
+
+Doctrine Hierarchy
+
+Whenever uncertainty exists, use the following order:
+
+Desired Gameplay Experience
 ↓
-Refresh Blackboard intelligence
+Doctrine
 ↓
-Continue shadowing when practical
+Controller Design
 ↓
-Enable another strike cycle
+Implementation
 ↓
-Perform another BDA
+Runtime Verification
 
-If the target is eliminated:
 
-Confirm the result
-↓
-Complete the target service cycle
-↓
-Resume patrol
+Implementation serves doctrine.
 
-Player Experience Doctrine
---------------------------
+Doctrine serves gameplay.
 
-Players should observe evidence that
-battlefield intelligence exists.
+Core Principle
 
-The intelligence cycle should not be hidden.
+Assets exist to satisfy battlefield requirements.
 
-Drone
-↓
+Assets do not exist to execute isolated actions.
+
+Every asset should contribute to:
+
+Battlefield Understanding
+
+Battlefield Decisions
+
+Battlefield Effects
+
+Asset Philosophy
+
+Assets should appear purposeful.
+
+Assets should not appear scripted.
+
+Assets should not appear robotic.
+
+When given a choice between:
+
+Optimal behavior
+
+
+and
+
+Believable behavior
+
+
+prefer:
+
+Believable behavior
+
+
+provided mission effectiveness remains acceptable.
+
+Intelligence Doctrine
+
+Intelligence is more valuable than contact discovery alone.
+
+Discovery is only the beginning of the intelligence lifecycle.
+
+Intelligence requirements may include:
+
 Detection
+
+Observation
+
+Tracking
+
+Support
+
+Verification
+
+Reporting
+
+
+An intelligence requirement is not complete until the required information is known with sufficient confidence.
+
+Battlefield Awareness Doctrine
+
+Battlefield understanding is more valuable than isolated contact awareness.
+
+When possible:
+
+Battlefield Picture
+>
+Individual Contact
+
+
+Controllers should seek to improve understanding of overall battlefield conditions rather than becoming permanently attached to single contacts.
+
+Confidence Doctrine
+
+Controllers should evaluate:
+
+What do I know?
+
+How sure am I?
+
+
+Confidence is a first-class decision factor.
+
+Actions should be influenced by confidence.
+
+Completion should be influenced by confidence.
+
+Verification should be influenced by confidence.
+
+Survivability Doctrine
+
+Destroyed assets produce no value.
+
+When possible:
+
+Survivability
+>
+Perfect Information
+
+
+Controllers should prioritize maintaining intelligence collection capability over maximizing short-term observation quality.
+
+Observation Doctrine
+
+Observation is not proximity.
+
+Observation is information collection.
+
+Controllers should seek:
+
+Useful Observation
+
+Safe Observation
+
+Sustainable Observation
+
+
+rather than merely minimizing distance to a target.
+
+Adaptation Doctrine
+
+Battlefields change.
+
+Controllers should continuously reevaluate:
+
+Intelligence Value
+
+Confidence
+
+Risk
+
+Position Quality
+
+
+Static behavior should be avoided unless conditions justify remaining stationary.
+
+Risk Doctrine
+
+Risk is not simply:
+
+Can I be destroyed?
+
+
+Risk is:
+
+How likely am I to lose my ability to continue providing value?
+
+
+Controllers should react to increasing risk before mission failure occurs.
+
+Controller Development Workflow
+
+Controllers should be developed in the following sequence:
+
+Desired Arma Behavior
 ↓
-Warning
+Doctrine
 ↓
-Strike
+Controller Specification
+↓
+State Machine
+↓
+Pseudocode
+↓
+SQF Implementation
+↓
+Runtime Testing
+↓
+Refinement
 
-Example:
 
-"Enemy reconnaissance drone has identified your position."
+Do not begin implementation until the desired gameplay behavior is understood.
 
-Purpose:
+Current Frontier
 
-Players learn the KBCF intelligence cycle through gameplay.
+The framework exists to support asset behaviors.
+
+Current development focus is:
+
+Controller Behavior
+
+Doctrine Refinement
+
+Gameplay Experience
+
+Player-Facing Effects
+
+Autonomous Asset Roles
 
 
-Doctrine Decision Recorded Today
---------------------------------
+The primary question is no longer:
 
-SCOUT Loss Doctrine
+Can the framework perform the lifecycle?
 
-Chosen Direction:
 
-Capability loss should matter.
+The primary question is:
 
-Players should be rewarded for destroying ISR.
+How should the assets behave within that lifecycle?
 
-Enemy awareness should degrade.
+SCOUT Doctrine v1
 
-Blackboard intelligence should decay naturally.
+Mission:
 
-Blindness should not necessarily be permanent.
-
-Future recovery may occur through doctrine-
-defined cooldowns, reserves, replenishment,
-or capability restoration systems.
-
-The restoration mechanism remains undefined.
-
-The desired battlefield outcome is defined.
-
--------------------------------------------------
-Scout Doctrine V1.
-
-Primary Objective:
 Maintain battlefield intelligence.
 
-Priority Hierarchy:
+
+Priorities:
+
 1. Survive
+
 2. Maintain battlefield awareness
-3. Maintain target observation
-4. Improve observation quality
 
-Behavior:
-- Establish observation positions rather than approach targets.
-- Use dynamic positioning.
-- Consider nearby threats.
-- Prefer terrain-aware observation.
-- Reposition periodically.
-- Reposition when risk increases.
-- Attempt intelligent reacquisition when observation is lost.
-- Remain battlefield-centric rather than target-centric.
+3. Maintain intelligence requirements
 
-Patrol Doctrine
----------------
-SCOUT should actively patrol information-rich areas rather than perform random movement.
+4. Maintain observation quality
 
-Preferred patrol locations include:
-- Roads
-- Towns
-- Objectives
-- Recent contact areas
-- Likely avenues of approach
+5. Optimize observation positions
 
-Target Service Doctrine
------------------------
-Attack completion does not equal target service completion.
 
-SCOUT owns target observation throughout the service cycle.
+Core Philosophy:
 
-SCOUT responsibilities:
-- Detect
-- Validate
-- Publish
-- Handoff
-- Shadow
-- Perform BDA
-- Confirm target service completion
+SCOUT services intelligence requirements.
 
-Shadow Doctrine
----------------
-SCOUT maintains observation on selected targets throughout the service cycle.
+SCOUT does not obsess over individual targets.
 
-SCOUT should continue monitoring priority targets until:
-- Target is destroyed
-- Target no longer exists
-- Target becomes invalid
-- Higher priority circumstances require reassignment
+SCOUT seeks battlefield understanding.
 
-Battle Damage Assessment Doctrine
----------------------------------
-SCOUT verifies outcomes rather than assuming outcomes.
+SCOUT adapts as conditions change.
 
-Target service completes only when SCOUT confirms the target no longer requires service.
+SCOUT verifies outcomes before reporting success.
 
-Examples:
-- Destroyed vehicle
-- Eliminated target
-- Abandoned target
-- Invalid target
-- No longer relevant target
 
-Post-Service Doctrine
----------------------
-After service completion, SCOUT returns to ISR duties and continues patrol operations.
+Observation Philosophy:
 
----------------------------------------------------------------------------------------------
-Drone Role Doctrine Checkpoint
+Safe observation
+>
+Perfect observation
 
-Current KBCF drone roles:
+Battlefield awareness
+>
+Single contact awareness
 
-SCOUT
-- Intelligence collection asset
-- Detects, tracks, and publishes contacts
-- Provides battlefield awareness
-- Does not directly engage targets
+Adaptive positioning
+>
+Static positioning
 
-FPV_STRIKE
-- Expendable precision strike asset
-- Consumed during attack
-- Uses kamikaze-style terminal engagement
-- Intended for high-value target destruction
 
-BOMBER
-- Reusable strike asset
-- Releases payload and survives
-- Intended for repeated service missions
-- Payload type may evolve independently of role
+Current Development Status:
 
-Architectural Decision:
-Role is separate from physical drone platform.
+Doctrine Complete
 
-KBCF reasons about battlefield roles and capabilities,
-not specific airframe classnames.
+Controller Specification In Progress
 
-Current implementation remains vanilla-first and
-self-contained.
+Pseudocode Pending
 
-Third-party drone mods are not required for operation.
+Implementation Not Started
 
+
+Honestly buddy, if WelcomeBack.md contained the document we wrote earlier and Doctrine.md contained something close to this, I think future Trevor or future Copilot could recover almost instantly:
+
+What KBCF is.
+
+What KBCF is not.
+
+What stage the project is in.
+
+How decisions are made.
+
+How controllers are developed.
+
+What SCOUT is supposed to become.
+
+
+That's about as close to a self-healing project onboarding package as I think we could realistically build. 🍻🚁
+SCOUT Status
+
+Desired Behavior:
+Complete
+
+Doctrine:
+Complete
+
+Controller Philosophy:
+Complete
+
+Decision Engines:
+Defined
+
+State Machine:
+Defined
+
+Controller Specification:
+In Progress
+
+Pseudocode:
+Not Started
+
+SQF Implementation:
+Not Started
+
+Runtime Testing:
+Not Started
+
+No new SCOUT controller code has been written.
+
+No pseudocode has been written.
+
+No implementation work has started.
+
+This work represents doctrine design, controller design,
+state design, and decision-model design only.
+
+Current effort is focused on determining the desired
+Arma behavior before implementation begins.

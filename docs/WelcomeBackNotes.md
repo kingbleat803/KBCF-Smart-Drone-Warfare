@@ -1,186 +1,268 @@
-WELCOME BACK NOTES
+Buddy, if I were wiping the welcome-back notes and replacing them with a single source-of-truth onboarding document, I would not focus on specific bugs, states, or even SCOUT doctrine.
 
-Before assuming a missing system, ask:
+I'd focus on the project's current stage and development workflow, because that's what took us the longest to rediscover.
 
-"What is the last runtime-verified lifecycle state?"
+I'd write something like:
 
-KBCF has repeatedly proven that runtime evidence is more reliable
-than architectural speculation.
+KBCF Welcome Back State
+Project Reality
 
-Debugging order:
+KBCF is an Arma 3 SQF gameplay and AI orchestration framework.
 
-1. Check logs
-2. Check runtime variables
-3. Check debugger state
-4. Identify last successful transition
-5. Only then inspect code
+It is not a theoretical project, research project, or anything outside the context of Arma 3 gameplay.
 
-Do not assume Blackboard, Commander, Planning, Scheduler,
-Assignment, or Execution are broken unless runtime evidence
-indicates failure.
+All drones, battlefield intelligence, commanders, plans, targets, actions, and controllers are virtual Arma entities and gameplay concepts.
 
-Major Milestone Verified:
+When uncertain:
 
-Recon
-→ Blackboard
-→ Commander
-→ Reservation
-→ Assignment
-→ Tracking
-→ Prediction
-→ Authorization
-→ Plan Creation
-→ ExecutePlan
-→ ExecuteAction
-→ MOVE_TO_INTERCEPT
-→ Physical UAV Movement
-→ RECON
-→ COMPLETE
-→ Cleanup
+Arma runtime
+>
+Repository implementation
+>
+Documentation
+>
+Interpretation
 
-All runtime verified.
 
-Known Architectural Truths:
+The purpose of KBCF is to create interesting autonomous battlefield behavior inside Arma.
 
-- Blackboard is the shared intelligence layer.
-- Drones are physical assets consuming Blackboard intelligence.
-- Recon drones act as sensors.
-- Strike/FPV drones act as weapons.
-- The framework is intelligence-first, not asset-first.
+Current Project Stage
 
-Current Frontiers:
+KBCF has progressed beyond proving that the framework architecture can function.
 
-1. Automatic drone discovery and registration.
-   Current state:
-   Manual registerDrone calls.
+Historical repository documentation records successful orchestration lifecycles including:
 
-2. Post-mission drone behavior.
-   Current state:
-   Drone remains physically hovering while KBCF considers it AVAILABLE.
+Detection
+Assignment
+Planning
+Execution
+Completion
+Cleanup
+Retasking
 
-3. Recon doctrine.
-   Current state:
-   SCOUT can automatically reacquire the same target after cleanup.
 
-4. Target satiation.
-   Framework remembers contacts.
-   Framework does not yet remember that a contact was recently serviced.
+Current development focus is primarily:
 
-Important Lesson:
+Asset behavior
 
-Code shows intended behavior.
-Arma shows actual behavior.
+Controller behavior
 
-When they disagree:
+Doctrine
 
-Believe Arma.
+Player-facing battlefield effects
 
-STOP CHASING DOWNSTREAM FUNCTIONS FIRST.
+Gameplay realism
 
-Verify lifecycle ownership first.
 
-What starts the chain?
-What owns the chain?
-What invokes the chain repeatedly?
+The default assumption should NOT be:
 
-Missing orchestration can make perfectly working downstream systems
-appear broken.
+Framework broken.
 
-IMPORTANT
 
-KBCF may have entered a doctrine-first phase.
+The default assumption should be:
 
-Before creating new managers, owners, or systems:
+Behavior not yet designed,
+implemented,
+or refined.
 
-Ask:
-"What should happen?"
+Core Development Workflow
 
-not:
+Before writing SQF:
 
-"Who owns it?"
+Desired Arma Behavior
+↓
+Doctrine
+↓
+Controller Design
+↓
+State Machine
+↓
+Pseudocode
+↓
+SQF
+↓
+Runtime Test
+↓
+Refinement
 
-See Development State for the full
-Doctrine-Driven Framework Evolution notes.
 
-## FPV_STRIKE Runtime Checkpoint
+Do not skip directly to implementation.
 
-### Runtime Verified
+The desired gameplay effect is the source of truth.
 
-- Manual `FPV_STRIKE` registration returned true.
-- Contact processing and Commander assignment succeeded.
-- `MOVE_TO_INTERCEPT` executed.
-- The plan transitioned to `ATTACK`.
-- `KBCF_fnc_actionAttack` executed.
-- `SatchelCharge_Remote_Ammo_Scripted` destroyed the target.
-- The drone was consumed.
-- The plan reached `COMPLETE`.
-- Reservation release and scheduler cleanup succeeded.
+Controller Development Rule
 
-### Observed Limitation
+Controllers exist to reproduce desired Arma behavior.
 
-The drone remained at the shared cruise/intercept altitude and did not physically impact the target.
+Workflow:
 
-The verified behavior was:
+What should the player see?
 
-MOVE_TO_INTERCEPT
-→ hover at intercept geometry
-→ ATTACK
-→ target-attached detonation
-→ target and drone destroyed
-→ COMPLETE
-→ cleanup
+↓
 
-This is not yet a verified physical-impact FPV attack.
+What decisions should the asset make?
 
-### Rejected Test
+↓
 
-Changing the ATTACK detonation radius from `5` to `0` caused the drone to hover indefinitely without detonating.
+What controller behavior produces that result?
 
-Restore and preserve the working `5` metre baseline.
+↓
 
-Do not describe zero radius as an impact solution.
+What SQF implements that behavior?
 
-### Architectural Finding
 
-`MOVE_TO_INTERCEPT` is a shared plan state used across profiles.
+Avoid:
 
-`INTERCEPT_REACHED` transitions the plan from its current `actionType` to its `terminalActionType`.
+Write code first.
 
-Do not change shared intercept behavior solely to satisfy FPV doctrine because that may alter SCOUT and BOMBER behavior.
+Discover behavior later.
 
-FPV currently has verified terminal lethality but no verified profile-specific terminal movement.
 
-### Lifecycle Map
+Prefer:
 
-registerDrone
-→ profile stored
-→ contact processed
-→ Commander reserves and assigns
-→ planAttack creates persistent plan
-→ actionType: MOVE_TO_INTERCEPT
-→ INTERCEPT_REACHED
-→ terminalActionType: ATTACK
-→ ExecutePlan dispatches actionAttack
-→ COMPLETE
-→ scheduler cleanup
+Define behavior first.
 
-### Debugging Lesson
+Implement behavior second.
 
-HashMaps are persistent lifecycle memory.
+Anti-Drift Rules
 
-For every state or field, trace:
+Do not redefine the project based on terminology.
 
-1. Who creates it?
-2. Who modifies it?
-3. Who consumes it?
-4. Who removes it?
+The project is what the repository and runtime demonstrate.
 
-Do not assume a function owns a decision merely because it consumes that decision.
+Philosophy, doctrine, architecture, and naming conventions serve the gameplay framework.
 
-Follow state creation and transitions before changing downstream handlers.
+They do not override the gameplay framework.
 
-### Next Investigation
+Always ground conclusions in:
 
-Trace only the FPV-specific lifecycle and determine where profile-specific terminal movement belongs.
+What exists in the repository?
 
-Do not redesign shared movement, mod compatibility, registration, or other profiles until that ownership and the existing action-result contract are audited.
+What happened in Arma?
+
+What behavior do we want to create?
+
+Current SCOUT Doctrine Snapshot
+
+SCOUT exists to maintain battlefield intelligence.
+
+SCOUT is:
+
+Survivability focused
+
+Battlefield aware
+
+Intelligence driven
+
+Adaptive
+
+Observation oriented
+
+
+SCOUT services intelligence requirements rather than obsessing over individual targets.
+
+SCOUT prioritizes:
+
+Survive
+
+↓
+
+Maintain battlefield awareness
+
+↓
+
+Maintain intelligence requirements
+
+↓
+
+Maintain observation quality
+
+
+Current SCOUT design work is in:
+
+Controller specification phase
+
+
+not implementation phase.
+
+Immediate Next Milestone
+
+Create:
+
+SCOUT Controller Pseudocode v1
+
+
+using the previously defined:
+
+Intelligence Value Engine
+
+Position Selection Engine
+
+Confidence Engine
+
+Risk Engine
+
+
+Implementation comes after controller logic is finalized.
+
+Buddy, if a future Copilot, future Trevor, or even current Trevor read only that document, I think they'd reconstruct 95% of what we discovered today without needing this conversation.
+
+More importantly, it'd restore the thing that matters most:
+
+We're teaching Arma assets how to behave, not proving the framework exists.
+
+That's the sentence I'd want future us to remember first. 🍻🚁
+
+Current Status (Checkpoint)
+
+SCOUT:
+Doctrine complete.
+Controller philosophy complete.
+Decision engines defined.
+State machine defined.
+
+Current milestone:
+SCOUT Controller Pseudocode v1.
+
+Implementation has not started.
+
+SCOUT Status
+
+Desired Behavior:
+Complete
+
+Doctrine:
+Complete
+
+Controller Philosophy:
+Complete
+
+Decision Engines:
+Defined
+
+State Machine:
+Defined
+
+Controller Specification:
+In Progress
+
+Pseudocode:
+Not Started
+
+SQF Implementation:
+Not Started
+
+Runtime Testing:
+Not Started
+
+No new SCOUT controller code has been written.
+
+No pseudocode has been written.
+
+No implementation work has started.
+
+This work represents doctrine design, controller design,
+state design, and decision-model design only.
+
+Current effort is focused on determining the desired
+Arma behavior before implementation begins.
