@@ -130,23 +130,26 @@ The restoration mechanism remains undefined.
 The desired battlefield outcome is defined.
 
 -------------------------------------------------
-SCOUT DOCTRINE v1
+Scout Doctrine V1.
 
-Role
------
-SCOUT is a Persistent ISR (Intelligence, Surveillance, Reconnaissance) Asset.
+Primary Objective:
+Maintain battlefield intelligence.
 
-SCOUT exists to maintain battlefield awareness, discover threats, support asset selection, monitor service cycles, and verify target outcomes.
+Priority Hierarchy:
+1. Survive
+2. Maintain battlefield awareness
+3. Maintain target observation
+4. Improve observation quality
 
-Core Principles
----------------
-- Detection is a persistent capability.
-- SCOUT should continuously gather intelligence.
-- SCOUT should prioritize survivability when threatened.
-- SCOUT should value threat-weighted intelligence over raw contact quantity.
-- SCOUT should consider available battlefield resources when supporting responses.
-- Players should have meaningful ISR counterplay.
-- ISR loss should have battlefield consequences.
+Behavior:
+- Establish observation positions rather than approach targets.
+- Use dynamic positioning.
+- Consider nearby threats.
+- Prefer terrain-aware observation.
+- Reposition periodically.
+- Reposition when risk increases.
+- Attempt intelligent reacquisition when observation is lost.
+- Remain battlefield-centric rather than target-centric.
 
 Patrol Doctrine
 ---------------
