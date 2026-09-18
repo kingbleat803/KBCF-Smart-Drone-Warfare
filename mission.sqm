@@ -16,14 +16,14 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={2483.0889,30.653021,3700.2109};
-		dir[]={0.83747,-0.37828496,-0.39439145};
-		up[]={0.34223399,0.92568922,-0.16116895};
-		aside[]={-0.42605168,0,-0.90469897};
+		pos[]={2460.6914,32.886761,3738.8894};
+		dir[]={0.83747005,-0.37828481,-0.39439148};
+		up[]={0.34223387,0.92568922,-0.16116889};
+		aside[]={-0.42605168,0,-0.90469891};
 	};
 };
 binarizationWanted=0;
-sourceName="KBCF-Smart-Drone-Warfare";
+sourceName="KBCF_Test_Handoff";
 addons[]=
 {
 	"A3_Characters_F",
@@ -117,7 +117,6 @@ class Mission
 					flags=7;
 					class Attributes
 					{
-						name="target1";
 						isPlayer=1;
 					};
 					id=1;
@@ -172,6 +171,7 @@ class Mission
 					class PositionInfo
 					{
 						position[]={2550.667,13.374879,3692.2068};
+						angles[]={6.259192,0,6.2805333};
 					};
 					side="East";
 					flags=6;
@@ -189,6 +189,7 @@ class Mission
 					class PositionInfo
 					{
 						position[]={2550.6675,13.525332,3692.2087};
+						angles[]={6.259192,0,6.2805333};
 					};
 					side="East";
 					flags=4;
@@ -237,17 +238,18 @@ class Mission
 				};
 			};
 			id=3;
-			atlOffset=117.11738;
+			atlOffset=-0.00027561188;
 		};
 		class Item2
 		{
 			dataType="Object";
 			class PositionInfo
 			{
-				position[]={4242.2964,164.31422,3558.3765};
+				position[]={2542.9419,13.12731,3671.5935};
+				angles[]={6.259192,0,6.2805333};
 			};
 			side="East";
-			flags=2;
+			flags=6;
 			class Attributes
 			{
 				name="drone1";
@@ -256,7 +258,7 @@ class Mission
 			};
 			id=4;
 			type="O_UAV_01_F";
-			atlOffset=117.11738;
+			atlOffset=-0.00027561188;
 			class CustomAttributes
 			{
 				class Attribute0
@@ -354,12 +356,13 @@ class Mission
 					class PositionInfo
 					{
 						position[]={2730.2258,13.345635,3550.1262};
-						angles[]={6.2778444,0,0.090425514};
+						angles[]={0.039979152,0,6.2033563};
 					};
 					side="West";
 					flags=6;
 					class Attributes
 					{
+						name="target1D";
 					};
 					id=10;
 					type="B_Soldier_F";
@@ -391,22 +394,25 @@ class Mission
 				};
 			};
 			id=8;
+			atlOffset=-0.034317017;
 		};
 		class Item5
 		{
 			dataType="Object";
 			class PositionInfo
 			{
-				position[]={2730.0269,15.541137,3550.0627};
-				angles[]={6.2778444,0,0.090425514};
+				position[]={2496.658,14.903653,3725.103};
+				angles[]={0.039979152,0,6.2033563};
 			};
 			side="West";
 			flags=6;
 			class Attributes
 			{
+				name="target1";
 			};
 			id=9;
 			type="B_MRAP_01_F";
+			atlOffset=-0.034317017;
 		};
 	};
 };
