@@ -1,268 +1,130 @@
-Buddy, if I were wiping the welcome-back notes and replacing them with a single source-of-truth onboarding document, I would not focus on specific bugs, states, or even SCOUT doctrine.
+# KBCF Welcome Back Notes
 
-I'd focus on the project's current stage and development workflow, because that's what took us the longest to rediscover.
+## Read These In Order
 
-I'd write something like:
+1. Development_State.md
+2. VERIFIED.md
+3. Architecture.md
+4. Doctrine.md
+5. ROADMAP.md
+6. CHANGELOG.md
 
-KBCF Welcome Back State
-Project Reality
+---
 
-KBCF is an Arma 3 SQF gameplay and AI orchestration framework.
+## Project Recovery Rules
 
-It is not a theoretical project, research project, or anything outside the context of Arma 3 gameplay.
+Do not recover project state from memory.
 
-All drones, battlefield intelligence, commanders, plans, targets, actions, and controllers are virtual Arma entities and gameplay concepts.
+Do not recover project state from previous chats.
 
-When uncertain:
+Recover project state from:
 
-Arma runtime
->
-Repository implementation
->
-Documentation
->
-Interpretation
+1. Current repository implementation
+2. VERIFIED.md
+3. Development_State.md
 
+Runtime evidence is final authority.
 
-The purpose of KBCF is to create interesting autonomous battlefield behavior inside Arma.
+Repository implementation is second authority.
 
-Current Project Stage
+Documentation exists to explain repository reality, not replace it.
 
-KBCF has progressed beyond proving that the framework architecture can function.
+---
 
-Historical repository documentation records successful orchestration lifecycles including:
+## Documentation Roles
 
-Detection
-Assignment
-Planning
-Execution
-Completion
-Cleanup
-Retasking
+Doctrine.md
+=
+Desired behavior
 
+Architecture.md
+=
+Ownership and execution flow
 
-Current development focus is primarily:
+Development_State.md
+=
+Current project board
 
-Asset behavior
+VERIFIED.md
+=
+Runtime-proven facts
 
-Controller behavior
+ROADMAP.md
+=
+Future milestones
 
-Doctrine
+CHANGELOG.md
+=
+Historical changes
 
-Player-facing battlefield effects
+---
 
-Gameplay realism
+## Current Project Phase
 
+Framework architecture largely established.
 
-The default assumption should NOT be:
+Current development focus:
 
-Framework broken.
+Controller doctrine implementation through runtime-verified behaviors.
 
+Current controller:
 
-The default assumption should be:
-
-Behavior not yet designed,
-implemented,
-or refined.
-
-Core Development Workflow
-
-Before writing SQF:
-
-Desired Arma Behavior
-↓
-Doctrine
-↓
-Controller Design
-↓
-State Machine
-↓
-Pseudocode
-↓
-SQF
-↓
-Runtime Test
-↓
-Refinement
-
-
-Do not skip directly to implementation.
-
-The desired gameplay effect is the source of truth.
-
-Controller Development Rule
-
-Controllers exist to reproduce desired Arma behavior.
-
-Workflow:
-
-What should the player see?
-
-↓
-
-What decisions should the asset make?
-
-↓
-
-What controller behavior produces that result?
-
-↓
-
-What SQF implements that behavior?
-
-
-Avoid:
-
-Write code first.
-
-Discover behavior later.
-
-
-Prefer:
-
-Define behavior first.
-
-Implement behavior second.
-
-Anti-Drift Rules
-
-Do not redefine the project based on terminology.
-
-The project is what the repository and runtime demonstrate.
-
-Philosophy, doctrine, architecture, and naming conventions serve the gameplay framework.
-
-They do not override the gameplay framework.
-
-Always ground conclusions in:
-
-What exists in the repository?
-
-What happened in Arma?
-
-What behavior do we want to create?
-
-Current SCOUT Doctrine Snapshot
-
-SCOUT exists to maintain battlefield intelligence.
-
-SCOUT is:
-
-Survivability focused
-
-Battlefield aware
-
-Intelligence driven
-
-Adaptive
-
-Observation oriented
-
-
-SCOUT services intelligence requirements rather than obsessing over individual targets.
-
-SCOUT prioritizes:
-
-Survive
-
-↓
-
-Maintain battlefield awareness
-
-↓
-
-Maintain intelligence requirements
-
-↓
-
-Maintain observation quality
-
-
-Current SCOUT design work is in:
-
-Controller specification phase
-
-
-not implementation phase.
-
-Immediate Next Milestone
-
-Create:
-
-SCOUT Controller Pseudocode v1
-
-
-using the previously defined:
-
-Intelligence Value Engine
-
-Position Selection Engine
-
-Confidence Engine
-
-Risk Engine
-
-
-Implementation comes after controller logic is finalized.
-
-Buddy, if a future Copilot, future Trevor, or even current Trevor read only that document, I think they'd reconstruct 95% of what we discovered today without needing this conversation.
-
-More importantly, it'd restore the thing that matters most:
-
-We're teaching Arma assets how to behave, not proving the framework exists.
-
-That's the sentence I'd want future us to remember first. 🍻🚁
-
-Current Status (Checkpoint)
-
-SCOUT:
-Doctrine complete.
-Controller philosophy complete.
-Decision engines defined.
-State machine defined.
+SCOUT
 
 Current milestone:
-SCOUT Controller Pseudocode v1.
 
-Implementation has not started.
+SCOUT Prototype V2
 
-SCOUT Status
+Replace temporary observe counter with first real SCOUT decision behavior.
 
-Desired Behavior:
-Complete
+---
 
-Doctrine:
-Complete
+## Important Distinction
 
-Controller Philosophy:
-Complete
+Doctrine
+≠
+Implementation
 
-Decision Engines:
-Defined
+Implementation
+≠
+Runtime Verification
 
-State Machine:
-Defined
+A behavior is not considered complete because it appears in doctrine.
 
-Controller Specification:
-In Progress
+A behavior becomes project reality only after:
 
-Pseudocode:
-Not Started
+Controller Design
+↓
+Implementation
+↓
+Runtime Verification
 
-SQF Implementation:
-Not Started
+---
 
-Runtime Testing:
-Not Started
+## Recovery Question
 
-No new SCOUT controller code has been written.
+When returning to the project, ask:
 
-No pseudocode has been written.
+"What behavior are we building next?"
 
-No implementation work has started.
+Do not ask:
 
-This work represents doctrine design, controller design,
-state design, and decision-model design only.
+"Is the controller complete?"
 
-Current effort is focused on determining the desired
-Arma behavior before implementation begins.
+Controllers are built one verified behavior at a time.
+
+---
+
+## Documentation Update Rule
+
+After significant work:
+
+1. What changed?
+2. What did runtime prove?
+3. Did ownership change?
+4. Did doctrine change?
+5. Did milestone status change?
+
+Update only the appropriate documents.
+
+Avoid mixing doctrine, implementation status, architecture, and runtime facts into the same document.
