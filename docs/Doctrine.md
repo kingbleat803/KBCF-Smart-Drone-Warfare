@@ -1,31 +1,42 @@
-Buddy, if I were rewriting Doctrine.md from scratch today, knowing everything we discovered in this session, I would make it much more timeless and much less implementation-specific.
+# KBCF Controller Doctrine
 
-The Welcome Back Notes should answer:
+## Purpose
 
-Where are we?
+## Important Distinction
 
+Doctrine describes desired behavior.
 
-Doctrine.md should answer:
+Doctrine is not implementation.
 
-How do we make decisions?
+Doctrine is not evidence that a behavior currently exists.
 
+A documented behavior becomes project reality only after:
 
-I'd write something like this:
+Controller Design
+↓
+Implementation
+↓
+Runtime Verification
 
-KBCF Doctrine
-Purpose
+Implementation status belongs in Development_State.md.
 
-KBCF is an Arma 3 gameplay framework that creates autonomous battlefield behavior through virtual intelligence gathering, planning, assignment, execution, verification, and retasking.
+Runtime evidence belongs in VERIFIED.md.
 
-The goal of KBCF is not merely to execute actions.
+This document defines desired controller behavior.
 
-The goal of KBCF is to create believable battlefield behavior that players can observe and interact with.
+Doctrine describes what controllers should do.
 
-Doctrine Hierarchy
+Doctrine does not describe implementation status.
 
-Whenever uncertainty exists, use the following order:
+Doctrine does not imply a behavior exists.
 
-Desired Gameplay Experience
+Implementation and runtime verification are tracked separately.
+
+---
+
+# Doctrine Hierarchy
+
+Gameplay Experience
 ↓
 Doctrine
 ↓
@@ -35,325 +46,105 @@ Implementation
 ↓
 Runtime Verification
 
+Doctrine provides direction.
 
-Implementation serves doctrine.
+Runtime determines reality.
 
-Doctrine serves gameplay.
+---
 
-Core Principle
+# SCOUT Doctrine
 
-Assets exist to satisfy battlefield requirements.
+## Mission
 
-Assets do not exist to execute isolated actions.
+Provide useful battlefield intelligence while preserving survivability and maintaining observation capability.
 
-Every asset should contribute to:
+---
 
-Battlefield Understanding
+## Core Priorities
 
-Battlefield Decisions
+1. Survivability
+2. Observation Quality
+3. Intelligence Collection
+4. Intelligence Maintenance
+5. Reporting
 
-Battlefield Effects
+---
 
-Asset Philosophy
+## Desired Behaviors
 
-Assets should appear purposeful.
+SCOUT should:
 
-Assets should not appear scripted.
+- Maintain observation of assigned intelligence requirements.
+- Seek useful observation positions.
+- Reposition when observation quality becomes unacceptable.
+- Avoid unnecessary exposure.
+- Adapt to changing battlefield conditions.
+- Continue generating intelligence while operational.
+- Verify observations before reporting.
+- Maintain awareness of multiple relevant contacts when possible.
 
-Assets should not appear robotic.
+---
 
-When given a choice between:
+## Desired Decision Areas
 
-Optimal behavior
+SCOUT decisions may consider:
 
+- Observation quality
+- Distance
+- Visibility
+- Threat exposure
+- Confidence level
+- Available observation positions
+- Mission requirements
+- Intelligence value
 
-and
+---
 
-Believable behavior
+## Desired Characteristics
 
+SCOUT should be:
 
-prefer:
+- Persistent
+- Adaptive
+- Survivable
+- Information focused
+- Resource conscious
+- Autonomous
 
-Believable behavior
+---
 
+## Mission Completion
 
-provided mission effectiveness remains acceptable.
+A SCOUT task is considered complete when:
 
-Intelligence Doctrine
+- Intelligence requirements have been satisfied
 
-Intelligence is more valuable than contact discovery alone.
+OR
 
-Discovery is only the beginning of the intelligence lifecycle.
+- Further observation is no longer beneficial
 
-Intelligence requirements may include:
+OR
 
-Detection
+- The controller determines continuation is not justified according to doctrine.
 
-Observation
+---
 
-Tracking
+# FPV_STRIKE Doctrine
 
-Support
+(TBD)
 
-Verification
+---
 
-Reporting
+# BOMBER Doctrine
 
+(TBD)
 
-An intelligence requirement is not complete until the required information is known with sufficient confidence.
+---
 
-Battlefield Awareness Doctrine
+# Notes
 
-Battlefield understanding is more valuable than isolated contact awareness.
+Doctrine is a behavioral target.
 
-When possible:
+Doctrine does not indicate current implementation state.
 
-Battlefield Picture
->
-Individual Contact
-
-
-Controllers should seek to improve understanding of overall battlefield conditions rather than becoming permanently attached to single contacts.
-
-Confidence Doctrine
-
-Controllers should evaluate:
-
-What do I know?
-
-How sure am I?
-
-
-Confidence is a first-class decision factor.
-
-Actions should be influenced by confidence.
-
-Completion should be influenced by confidence.
-
-Verification should be influenced by confidence.
-
-Survivability Doctrine
-
-Destroyed assets produce no value.
-
-When possible:
-
-Survivability
->
-Perfect Information
-
-
-Controllers should prioritize maintaining intelligence collection capability over maximizing short-term observation quality.
-
-Observation Doctrine
-
-Observation is not proximity.
-
-Observation is information collection.
-
-Controllers should seek:
-
-Useful Observation
-
-Safe Observation
-
-Sustainable Observation
-
-
-rather than merely minimizing distance to a target.
-
-Adaptation Doctrine
-
-Battlefields change.
-
-Controllers should continuously reevaluate:
-
-Intelligence Value
-
-Confidence
-
-Risk
-
-Position Quality
-
-
-Static behavior should be avoided unless conditions justify remaining stationary.
-
-Risk Doctrine
-
-Risk is not simply:
-
-Can I be destroyed?
-
-
-Risk is:
-
-How likely am I to lose my ability to continue providing value?
-
-
-Controllers should react to increasing risk before mission failure occurs.
-
-Controller Development Workflow
-
-Controllers should be developed in the following sequence:
-
-Desired Arma Behavior
-↓
-Doctrine
-↓
-Controller Specification
-↓
-State Machine
-↓
-Pseudocode
-↓
-SQF Implementation
-↓
-Runtime Testing
-↓
-Refinement
-
-
-Do not begin implementation until the desired gameplay behavior is understood.
-
-Current Frontier
-
-The framework exists to support asset behaviors.
-
-Current development focus is:
-
-Controller Behavior
-
-Doctrine Refinement
-
-Gameplay Experience
-
-Player-Facing Effects
-
-Autonomous Asset Roles
-
-
-The primary question is no longer:
-
-Can the framework perform the lifecycle?
-
-
-The primary question is:
-
-How should the assets behave within that lifecycle?
-
-SCOUT Doctrine v1
-
-Mission:
-
-Maintain battlefield intelligence.
-
-
-Priorities:
-
-1. Survive
-
-2. Maintain battlefield awareness
-
-3. Maintain intelligence requirements
-
-4. Maintain observation quality
-
-5. Optimize observation positions
-
-
-Core Philosophy:
-
-SCOUT services intelligence requirements.
-
-SCOUT does not obsess over individual targets.
-
-SCOUT seeks battlefield understanding.
-
-SCOUT adapts as conditions change.
-
-SCOUT verifies outcomes before reporting success.
-
-
-Observation Philosophy:
-
-Safe observation
->
-Perfect observation
-
-Battlefield awareness
->
-Single contact awareness
-
-Adaptive positioning
->
-Static positioning
-
-
-Current Development Status:
-
-Doctrine Complete
-
-Controller Specification In Progress
-
-Pseudocode Pending
-
-Implementation Not Started
-
-
-Honestly buddy, if WelcomeBack.md contained the document we wrote earlier and Doctrine.md contained something close to this, I think future Trevor or future Copilot could recover almost instantly:
-
-What KBCF is.
-
-What KBCF is not.
-
-What stage the project is in.
-
-How decisions are made.
-
-How controllers are developed.
-
-What SCOUT is supposed to become.
-
-
-That's about as close to a self-healing project onboarding package as I think we could realistically build. 🍻🚁
-SCOUT Status
-
-Desired Behavior:
-Complete
-
-Doctrine:
-Complete
-
-Controller Philosophy:
-Complete
-
-Decision Engines:
-Defined
-
-State Machine:
-Defined
-
-Controller Specification:
-In Progress
-
-Pseudocode:
-Not Started
-
-SQF Implementation:
-Not Started
-
-Runtime Testing:
-Not Started
-
-No new SCOUT controller code has been written.
-
-No pseudocode has been written.
-
-No implementation work has started.
-
-This work represents doctrine design, controller design,
-state design, and decision-model design only.
-
-Current effort is focused on determining the desired
-Arma behavior before implementation begins.
+A documented behavior is not considered complete until implemented and runtime verified.
