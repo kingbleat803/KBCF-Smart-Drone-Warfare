@@ -110,7 +110,7 @@ if (!alive _drone) exitWith
     from OBSERVE to REPORT. It is not a doctrine value,
     confidence threshold, or final gameplay setting.
 */
-private _prototypeObserveCycleLimit = 2;
+private _prototypeObserveCycleLimit = 20;
 
 /*
     Initialize only the two SCOUT-owned prototype fields.
@@ -261,23 +261,49 @@ switch (_scoutState) do
                 ]
             ] call KBCF_fnc_log;
 
-            if
-            (
-                (_scoutMovementState isEqualTo "STATIONARY")
-                &&
-                (_currentMovementState isEqualTo "MOVING")
-            )
-            then
-            {
-                [
-                    "SCOUT",
-                    format
-                    [
-                        "Information Event Detected | STATIONARY_TO_MOVING | Drone:%1",
-                        netId _drone
-                    ]
-                ] call KBCF_fnc_log;
-            };
+if
+(
+    (_scoutMovementState isEqualTo "STATIONARY")
+    &&
+    (_currentMovementState isEqualTo "MOVING")
+)
+then
+{
+    private _observationEvent =
+        createHashMapFromArray
+        [
+            ["eventType", "STATIONARY_TO_MOVING"],
+            ["observedAt", time],
+            ["sourceDrone", netId _drone],
+            ["previousState", _scoutMovementState],
+            ["currentState", _currentMovementState]
+        ];
+
+    _plan set
+    [
+        "observationEvent",
+        _observationEvent
+    ];
+
+    [
+        "SCOUT",
+        format
+        [
+            "Information Event Detected | STATIONARY_TO_MOVING | Drone:%1",
+            netId _drone
+        ]
+    ] call KBCF_fnc_log;
+
+    [
+        "SCOUT",
+        format
+        [
+            "Observation Event Stored | Type:%1 | Drone:%2",
+            "STATIONARY_TO_MOVING",
+            netId _drone
+        ]
+    ] call KBCF_fnc_log;
+};
 
             _plan set
             [
@@ -361,22 +387,86 @@ switch (_scoutState) do
     };
 };
 
-    case "REPORT":
+case "REPORT":
+{
+    /*
+        Retrieve observation event generated
+        during OBSERVE.
+    */
+    private _observationEvent =
+        _plan getOrDefault
+        [
+            "observationEvent",
+            createHashMap
+        ];
+
+    private _eventType =
+        _observationEvent getOrDefault
+        [
+            "eventType",
+            ""
+        ];
+
+    /*
+        Verify REPORT consumes the stored event.
+    */
+    if (_eventType != "") then
     {
-        _result set ["success", true];
-        _result set ["completed", true];
-        _result set ["replanRequired", false];
-        _result set ["reason", "SCOUT_REPORT_COMPLETE"];
+        [
+            "SCOUT",
+            format
+            [
+                "REPORT Consumed Event | Type:%1 | Drone:%2",
+                _eventType,
+                netId _drone
+            ]
+        ] call KBCF_fnc_log;
+
+        /*
+            Publish structured report to the contact.
+        */
+        _contact set
+        [
+            "lastScoutReport",
+            _observationEvent
+        ];
 
         [
             "SCOUT",
             format
             [
-                "Prototype REPORT completion | Drone:%1",
+                "REPORT Published Event | Type:%1 | Drone:%2",
+                _eventType,
+                netId _drone
+            ]
+        ] call KBCF_fnc_log;
+    }
+    else
+    {
+        [
+            "SCOUT",
+            format
+            [
+                "REPORT No Observation Event | Drone:%1",
                 netId _drone
             ]
         ] call KBCF_fnc_log;
     };
+
+    _result set ["success", true];
+    _result set ["completed", true];
+    _result set ["replanRequired", false];
+    _result set ["reason", "SCOUT_REPORT_COMPLETE"];
+
+    [
+        "SCOUT",
+        format
+        [
+            "Prototype REPORT completion | Drone:%1",
+            netId _drone
+        ]
+    ] call KBCF_fnc_log;
+};
 
     default
     {

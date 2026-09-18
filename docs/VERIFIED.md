@@ -1,6 +1,6 @@
-## VERIFIED RUNTIME CHECKPOINTS
+### VERIFIED RUNTIME CHECKPOINTS
 
-### Core Orchestration
+#### Core Orchestration
 
 [PASS]
 
@@ -24,27 +24,20 @@ Evidence:
 
 Runtime verified in Arma.
 
---------------------------------
-
-### Physical UAV Movement
+#### Physical UAV Movement
 
 [PASS]
 
 Engine started
-
 flyInHeight executed
-
 Movement order issued
-
 Drone physically moved
 
 Evidence:
 
 Runtime verified in Arma.
 
---------------------------------
-
-### SHADOW Controller
+#### SHADOW Controller
 
 [PASS]
 
@@ -56,9 +49,7 @@ Evidence:
 
 Runtime verified in Arma.
 
---------------------------------
-
-### SCOUT State Persistence
+#### SCOUT State Persistence
 
 [PASS]
 
@@ -71,7 +62,6 @@ scheduler cycles.
 Verified Fields:
 
 scoutState
-
 scoutObserveCycles
 
 Verified Runtime Sequence:
@@ -102,14 +92,10 @@ the existing ACTIVE lifecycle.
 No framework redesign required.
 
 Scheduler ownership unchanged.
-
 executePlan ownership unchanged.
-
 Cleanup ownership unchanged.
 
---------------------------------
-
-### SCOUT Prototype V2 Movement Event Detection
+#### SCOUT Prototype V2 Movement Event Detection
 
 [PASS]
 
@@ -121,20 +107,15 @@ evaluation across ACTIVE scheduler cycles.
 Verified Fields:
 
 scoutState
-
 scoutObserveCycles
-
 scoutMovementState
 
 Verified Runtime Evidence:
 
 MovementState Initialized
-
 MovementState Check
-
 MovementState Updated
-
-Information Event Detected | STATIONARY_TO_MOVING
+Information Event Detected  STATIONARY_TO_MOVING
 
 Verified Runtime Sequence:
 
@@ -151,7 +132,6 @@ STATIONARY_TO_MOVING Event Detection
 Verified Classifications:
 
 STATIONARY
-
 MOVING
 
 Verified Information Event:
@@ -168,18 +148,73 @@ Plan-owned storage successfully supports
 movement-event evaluation.
 
 Plan ownership unchanged.
-
 Scheduler ownership unchanged.
-
 executePlan ownership unchanged.
-
 Cleanup ownership unchanged.
 
 No framework redesign required.
 
---------------------------------
+#### SCOUT Prototype V3 Observation Event Reporting
 
-### Known Broken
+[PASS]
+
+VERIFIED
+
+Plan-owned storage supports observation-event
+transfer from OBSERVE to REPORT.
+
+Verified Fields:
+
+observationEvent
+lastScoutReport
+
+Verified Runtime Evidence:
+
+Information Event Detected
+Observation Event Stored
+REPORT Consumed Event
+REPORT Published Event
+
+Verified Runtime Sequence:
+
+OBSERVE
+↓
+STATIONARY_TO_MOVING Detected
+↓
+Observation Event Stored
+↓
+REPORT
+↓
+REPORT Consumed Event
+↓
+REPORT Published Event
+↓
+COMPLETE
+
+Verified Event:
+
+STATIONARY_TO_MOVING
+
+Verified Conclusion:
+
+Observation events can persist across
+SCOUT controller state transitions.
+
+REPORT successfully consumes
+previously stored observation events.
+
+REPORT successfully publishes
+observation-event data to the assigned
+contact.
+
+Plan ownership unchanged.
+Scheduler ownership unchanged.
+executePlan ownership unchanged.
+Cleanup ownership unchanged.
+
+No framework redesign required.
+
+#### Known Broken
 
 [FAIL]
 

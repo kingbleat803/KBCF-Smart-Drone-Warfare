@@ -262,6 +262,50 @@ No framework redesign required.
 This milestone established the first runtime-verified SCOUT information-event capability.
 
 ---
+#### Milestone: SCOUT Prototype V3 Observation Event Reporting
+
+Status:
+
+Historical runtime milestone
+
+Objective:
+
+Extend SCOUT beyond movement-event detection and verify
+that observation events can survive until REPORT and be
+published to contact intelligence.
+
+Implemented:
+
+- observationEvent storage
+- REPORT event consumption
+- REPORT event publication
+- lastScoutReport contact publication
+
+Runtime verified evidence:
+
+Information Event Detected
+Observation Event Stored
+REPORT Consumed Event
+REPORT Published Event
+
+Verified conclusion:
+
+Observation-event data successfully persisted
+from OBSERVE into REPORT.
+
+REPORT successfully consumed stored
+observation-event data.
+
+REPORT successfully published observation
+information to the assigned contact.
+
+No ownership changes were required.
+
+No framework redesign was required.
+
+This milestone established the first
+runtime-verified SCOUT observation-event
+reporting capability.
 
 ### Current Frontier
 

@@ -1,191 +1,252 @@
-# Welcome Back Notes
+# KBCF Welcome Back Notes
 
-## Purpose
+---
 
-This file is a rapid recovery guide for future development sessions.
+## Read These In Order
 
-This file is NOT the source of truth.
+1. Development_State.md
+2. VERIFIED.md
+3. Architecture.md
+4. Doctrine.md
+5. ROADMAP.md
+6. CHANGELOG.md
 
-Detailed project status must always be obtained from:
+---
 
-- Development_State.md
+## Project Recovery Rules
+
+Do not recover project state from memory.
+
+Do not recover project state from previous chats.
+
+Recover project state from:
+
+1. Current repository implementation
+2. VERIFIED.md
+3. Development_State.md
+
+Runtime evidence is final authority.
+
+Repository implementation is second authority.
+
+Documentation exists to explain repository reality, not replace it.
+
+Truth hierarchy:
+
+Runtime Evidence
+↓
+Repository Implementation
+↓
+Repository Documentation
+↓
+Historical Records
+↓
+Memory
+
+Current repository and runtime evidence define project reality.
+
+---
+
+## Documentation Roles
+
+Doctrine.md
+=
+Desired behavior
+
+Architecture.md
+=
+Ownership and execution flow
+
+Development_State.md
+=
+Current project board
+
+VERIFIED.md
+=
+Runtime-proven facts
+
+ROADMAP.md
+=
+Future milestones
+
+CHANGELOG.md
+=
+Historical changes
+
+Do not mix document responsibilities.
+
+---
+
+## Important Distinction
+
+Doctrine
+≠
+Implementation
+
+Implementation
+≠
+Runtime Verification
+
+A behavior is not considered complete because it appears in doctrine.
+
+A behavior becomes project reality only after:
+
+Controller Design
+↓
+Implementation
+↓
+Runtime Verification
+
+Doctrine describes desired behavior.
+
+Implementation describes current code.
+
+Runtime determines reality.
+
+---
+
+## Investigation Board Rule
+
+Once a conclusion becomes:
+
+IMPLEMENTED
++
+RUNTIME VERIFIED
+
+treat it as current board state.
+
+Do not repeatedly re-open verified conclusions unless:
+
+- new runtime evidence appears
+- implementation changes
+- repository documentation conflicts with implementation
+- regression evidence appears
+
+Previously verified conclusions remain active until superseded by newer evidence.
+
+Do not repeatedly re-litigate settled results.
+
+Ask:
+
+"What changed?"
+
+before reopening a verified conclusion.
+
+---
+
+## Controller Development Rule
+
+Controllers are built one verified behavior at a time.
+
+Do not ask:
+
+"Is the controller complete?"
+
+Instead ask:
+
+"What behavior are we building next?"
+
+Controller completion is achieved through accumulation of verified behaviors.
+
+---
+
+## Current Project Phase
+
+Framework architecture largely established.
+
+Current development focus:
+
+Controller doctrine implementation through runtime-verified behaviors.
+
+Current controller:
+
+SCOUT
+
+Current profile goal:
+
+Complete SCOUT doctrine implementation and runtime verification.
+
+Current increment:
+
+(To be determined from repository evidence when milestone status changes.)
+
+Increment selection should be based on the remaining gap between:
+- Doctrine.md
+- Current implementation
 - VERIFIED.md
-- ROADMAP.md
-- CHANGELOG.md
+---
 
-Runtime evidence and current repository implementation remain the ultimate authorities.
+## Documentation Update Rule
+
+After significant work:
+
+1. What changed?
+2. What did runtime prove?
+3. Did ownership change?
+4. Did doctrine change?
+5. Did milestone status change?
+
+Update only the appropriate documents.
+
+Examples:
+
+Runtime proof changed
+→ VERIFIED.md
+
+Current active work changed
+→ Development_State.md
+
+Ownership changed
+→ Architecture.md
+
+Desired behavior changed
+→ Doctrine.md
+
+Future milestones changed
+→ ROADMAP.md
+
+Historical record changed
+→ CHANGELOG.md
+
+Avoid mixing:
+
+- doctrine
+- implementation status
+- architecture
+- roadmap items
+- runtime facts
+
+into the same document.
 
 ---
 
-## Project Context
+## Session Audit Rule
 
-KBCF and Smart Drone Warfare are exclusively an open-source Arma 3 SQF gameplay, AI orchestration, and autonomous asset framework project.
+Before making project conclusions:
 
-All drones, commanders, contacts, planners, targets, missions, actions, payloads, movement systems, and lifecycle events referenced throughout the repository are virtual Arma 3 gameplay systems.
+1. What does runtime prove?
+2. What does implementation prove?
+3. What does documentation claim?
+4. Do all three agree?
 
-Repository implementation and Arma runtime evidence define project reality.
+If they disagree:
 
----
+Runtime evidence wins.
 
-## Current Project Status
+Implementation is second authority.
 
-Core orchestration is runtime verified.
-
-Physical UAV movement is runtime verified.
-
-Action routing is runtime verified.
-
-SCOUT state persistence is runtime verified.
-
-SCOUT Prototype V2 movement-event detection is runtime verified.
-
-Current development frontier is SCOUT Prototype V3.
+Documentation should be corrected.
 
 ---
 
-## Most Recent Milestone
+## Recovery Question
 
-### SCOUT Prototype V2 Movement Event Detection
+When returning to the project, ask:
 
-Verified:
+"What behavior are we building next?"
 
-- scoutMovementState
-- STATIONARY classification
-- MOVING classification
-- STATIONARY_TO_MOVING event detection
+If work already occurred during the current session, first ask:
 
-Verified runtime evidence:
+"What changed since the last verified checkpoint?"
 
-- MovementState Initialized
-- MovementState Check
-- MovementState Updated
-- Information Event Detected | STATIONARY_TO_MOVING
-
----
-
-## Verified Architectural Conclusions
-
-The following questions have already been answered through runtime verification.
-
-SCOUT state persistence works.
-
-Plan-owned storage successfully supports persistent SCOUT controller state across ACTIVE scheduler cycles.
-
-Movement-event evaluation works.
-
-Plan-owned storage successfully supports movement-state persistence and comparison.
-
-No framework redesign is currently required.
-
-Scheduler ownership remains unchanged.
-
-executePlan ownership remains unchanged.
-
-Cleanup ownership remains unchanged.
-
-No additional lifecycle owner has been shown necessary.
-
----
-
-## Current Frontier
-
-The persistence question has been answered.
-
-The movement-event detection question has been answered.
-
-The current question is:
-
-What information should SCOUT evaluate next?
-
-Current verified behavior:
-
-OBSERVE
-↓
-Movement Evaluation
-↓
-Event Detection
-↓
-REPORT
-
-Future direction:
-
-OBSERVE
-↓
-Evaluate
-↓
-Decide
-↓
-REPORT
-
----
-
-## Current Candidate Directions
-
-Smallest-first philosophy remains in effect.
-
-Candidate V3 directions:
-
-- MOVING_TO_STATIONARY detection
-- Information quality evaluation
-- Confidence evaluation
-- Observation quality assessment
-
-The next milestone should remain intentionally small and runtime testable.
-
----
-
-## Do Not Reopen Without New Evidence
-
-The following questions have already been resolved and documented:
-
-- Confidence does not represent SCOUT progress.
-- Freshness does not represent SCOUT progress.
-- SCOUT state persistence is runtime verified.
-- Movement-event detection is runtime verified.
-- Plan-owned SCOUT state is sufficient.
-- Scheduler ownership remains unchanged.
-- executePlan ownership remains unchanged.
-- Cleanup ownership remains unchanged.
-- No framework redesign is currently justified.
-
-These conclusions were resolved through repository analysis and/or runtime verification as documented in VERIFIED.md and Development_State.md.
-
-Future sessions should start from these conclusions unless newer evidence supersedes them.
-
-Reopen only if:
-
-- Runtime evidence contradicts an existing conclusion.
-- Repository implementation changes.
-- A regression is observed.
-- New runtime behavior exposes an unmet responsibility.
-
-Do not reopen solved architectural questions based solely on theory, speculation, or familiarity with past discussions.
-
----
-
-## Recovery Workflow
-
-When starting a new session:
-
-1. Read this file.
-2. Read Development_State.md.
-3. Read VERIFIED.md.
-4. Read ROADMAP.md.
-5. Read CHANGELOG.md.
-6. Confirm current repository implementation.
-7. Confirm current runtime evidence.
-8. Continue from the current frontier rather than historical uncertainty.
-
----
-
-## Session Goal Reminder
-
-Current milestone sequence:
-
-SCOUT State Persistence Verification
-↓
-SCOUT Prototype V2 Movement Event Detection
-↓
-SCOUT Prototype V3 Intelligence Evaluation
-
-The current frontier is intelligence evaluation, not architecture redesign.
+before reassessing project status.
