@@ -139,17 +139,21 @@ Terminal Action
 
 VERIFIED
 
+The shared execution route is:
+
 executePlan
 ↓
 executeAction
 ↓
 Action Handler
 
-Verified handlers:
+Fresh runtime verification established successful dispatch for:
 
 MOVE_TO_INTERCEPT
 
 RECON
+
+The repository also contains routes for:
 
 ATTACK
 
@@ -162,6 +166,11 @@ TRACK
 OBSERVE
 
 REPOSITION
+
+Repository presence does not establish fresh runtime success for those handlers.
+
+Current profile-specific runtime status must be tracked separately in VERIFIED.md.
+
 
 ---
 

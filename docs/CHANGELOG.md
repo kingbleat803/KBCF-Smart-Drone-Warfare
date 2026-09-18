@@ -161,7 +161,7 @@ persistent SCOUT controller behavior.
 
 See:
 
-- WelcomeBack.md
+- WelcomeBackNotes.md
 - Doctrine.md
 - Development_State.md
 
