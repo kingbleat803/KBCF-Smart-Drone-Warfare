@@ -78,29 +78,17 @@ The primary development focus is controller behavior and doctrine implementation
 VERIFIED
 
 Blackboard creation
-
 Contact storage
-
 Contact updates
-
 Target classification
-
 Threat evaluation
-
 Target selection
-
 Reservation system
-
 Assignment system
-
 Plan generation
-
 Plan activation
-
 Scheduler orchestration
-
 Terminal cleanup
-
 Automatic retasking
 
 ---
@@ -110,13 +98,9 @@ Automatic retasking
 VERIFIED
 
 Engine startup
-
 Takeoff
-
 Intercept navigation
-
 Intercept arrival detection
-
 Terminal action transitions
 
 Verified sequence:
@@ -139,38 +123,27 @@ Terminal Action
 
 VERIFIED
 
-The shared execution route is:
-
 executePlan
 ↓
 executeAction
 ↓
 Action Handler
 
-Fresh runtime verification established successful dispatch for:
+Runtime verified:
 
 MOVE_TO_INTERCEPT
-
 RECON
 
-The repository also contains routes for:
+Repository routes exist for:
 
 ATTACK
-
 GRENADE_DROP
-
 SHADOW
-
 TRACK
-
 OBSERVE
-
 REPOSITION
 
-Repository presence does not establish fresh runtime success for those handlers.
-
-Current profile-specific runtime status must be tracked separately in VERIFIED.md.
-
+Repository presence does not establish runtime verification.
 
 ---
 
@@ -183,31 +156,76 @@ Plan-owned storage successfully supports persistent SCOUT controller state acros
 Verified fields:
 
 scoutState
-
 scoutObserveCycles
 
-Verified runtime sequence:
+Verified sequence:
 
-OBSERVE cycle 1
+OBSERVE
 ↓
-OBSERVE cycle 2
+OBSERVE
 ↓
 REPORT
 ↓
 COMPLETE
-↓
-Terminal Cleanup
 
 Verified conclusion:
 
-Persistent SCOUT state can operate inside the existing ACTIVE plan lifecycle.
+Persistent SCOUT controller behavior can operate inside the existing ACTIVE lifecycle.
 
 No framework redesign required.
 
+---
+
+## SCOUT Prototype V2
+
+VERIFIED
+
+Prototype V2 replaced the pure observation-counter test with the first runtime-verified information event evaluation.
+
+Verified fields:
+
+scoutState
+scoutObserveCycles
+scoutMovementState
+
+Verified behavior:
+
+Fresh Contact Refresh
+↓
+Movement Evaluation
+↓
+Movement Classification
+↓
+State Comparison
+↓
+Information Event Detection
+
+Verified movement classifications:
+
+STATIONARY
+MOVING
+
+Verified information event:
+
+STATIONARY_TO_MOVING
+
+Verified runtime evidence:
+
+MovementState Initialized
+MovementState Check
+MovementState Updated
+Information Event Detected | STATIONARY_TO_MOVING
+
+Current ownership:
+
+scoutMovementState is stored on the active plan.
+
+State persists across ACTIVE cycles.
+
+State is removed when plan cleanup occurs.
+
 Scheduler ownership unchanged.
-
 executePlan ownership unchanged.
-
 Cleanup ownership unchanged.
 
 ---
@@ -224,15 +242,13 @@ SCOUT Pseudocode V1
 
 SCOUT Pseudocode V2
 
-SCOUT State Integration Prototype
-
 SCOUT State Persistence Verification
+
+SCOUT Prototype V2 Movement Event Detection
 
 ---
 
-## Prototype Currently Implemented
-
-Current prototype behavior:
+## Current Prototype
 
 MOVE_TO_INTERCEPT
 ↓
@@ -240,17 +256,19 @@ RECON
 ↓
 OBSERVE
 ↓
-OBSERVE
+Movement Evaluation
 ↓
 REPORT
 ↓
 COMPLETE
 
-The observe counter exists solely as a persistence test.
+Current movement evaluation:
 
-The observe counter is not doctrine.
-
-The observe counter is not intended final gameplay behavior.
+- Refresh-gated
+- Horizontal speed based
+- STATIONARY classification
+- MOVING classification
+- STATIONARY_TO_MOVING detection
 
 ---
 
@@ -260,9 +278,9 @@ Risk Engine
 
 Confidence Engine
 
-Position Selection
+Observation Quality Evaluation
 
-Position Scoring
+Intelligence Value Evaluation
 
 SEARCH
 
@@ -272,15 +290,15 @@ INVESTIGATE
 
 BDA
 
-Multi-contact Intelligence Evaluation
-
-Observation Quality Assessment
-
 Adaptive Repositioning
 
-Intelligence Requirement Completion Logic
+Multi-Contact Intelligence Evaluation
 
-These remain future controller work.
+Mission Completion Evaluation Based On Information Quality
+
+MOVING_TO_STATIONARY information events
+
+Advanced movement behavior analysis
 
 ---
 
@@ -288,51 +306,55 @@ These remain future controller work.
 
 The persistence question has been answered.
 
+The first information-event question has also been answered.
+
 The next question is no longer:
 
 Can SCOUT state persist?
 
+The next question is no longer:
+
+Can SCOUT detect a movement event?
+
 The next question is:
 
-What is the smallest real SCOUT decision that should replace the temporary observe counter?
+What information should SCOUT evaluate next?
 
-Current prototype:
+Current verified behavior:
 
-OBSERVE
+Observe
 ↓
-Counter
+Classify Movement
 ↓
-REPORT
+Detect Event
+↓
+Report
 
 Future direction:
 
-OBSERVE
+Observe
 ↓
-Evaluate
+Evaluate Information Value
 ↓
 Decide
 ↓
-REPORT
-
-The next behavior should be intentionally small and runtime testable.
-
-Do not expand architecture without evidence.
-
-Prefer improving behavior within the verified lifecycle.
+Report
 
 ---
 
 # Current Unknowns
 
-Best observation-position selection method
-
 Observation quality evaluation
+
+Intelligence value scoring
 
 Confidence accumulation
 
 Confidence decay
 
-Intelligence requirement completion thresholds
+Information saturation
+
+Mission completion thresholds
 
 Threat-based reposition thresholds
 
@@ -346,11 +368,11 @@ Large multiplayer behavior
 
 # Immediate Milestone
 
-SCOUT Prototype V2
+SCOUT Prototype V3
 
 Goal:
 
-Replace the temporary observe-cycle counter with the first real SCOUT decision behavior.
+Expand beyond movement-event detection into meaningful intelligence evaluation while preserving the verified lifecycle.
 
 Must preserve:
 
@@ -362,7 +384,7 @@ Scheduler ownership
 
 Cleanup ownership
 
-Current verified lifecycle:
+Verified lifecycle:
 
 MOVE_TO_INTERCEPT
 ↓
@@ -390,4 +412,6 @@ VERIFIED
 
 ✅ SCOUT Ownership Audit
 
-✅ SCOUT 
+✅ SCOUT State Persistence
+
+✅ SCOUT Prototype V2 Movement Event Detection

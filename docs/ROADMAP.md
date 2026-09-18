@@ -1,4 +1,5 @@
 # KBCF Smart Drone Warfare
+
 # Roadmap
 
 ---
@@ -8,8 +9,6 @@
 KBCF is being developed in evolutionary generations.
 
 Each generation builds upon the previous generation.
-
-The objective is not merely to create smarter drones.
 
 The objective is to create autonomous battlefield agents capable of:
 
@@ -38,33 +37,19 @@ Influence
 ## Autonomous Orchestration
 
 ✅ Blackboard creation
-
 ✅ Contact publication
-
 ✅ Contact updates
-
 ✅ Target classification
-
 ✅ Threat evaluation
-
 ✅ Target scoring
-
 ✅ Target selection
-
 ✅ Reservation system
-
 ✅ Assignment system
-
 ✅ Plan creation
-
 ✅ Plan activation
-
 ✅ Scheduler orchestration
-
 ✅ Terminal cleanup
-
 ✅ Reservation release
-
 ✅ Automatic retasking
 
 ---
@@ -72,28 +57,10 @@ Influence
 ## Physical UAV Control
 
 ✅ Engine startup
-
 ✅ Takeoff
-
 ✅ Intercept navigation
-
 ✅ Intercept arrival detection
-
 ✅ Action transitions
-
-Verified Runtime Sequence:
-
-MOVE_TO_INTERCEPT
-↓
-Engine Start
-↓
-Takeoff
-↓
-Navigate
-↓
-Intercept Reached
-↓
-Transition To Terminal Action
 
 ---
 
@@ -113,11 +80,13 @@ Transition To Terminal Action
 
 ✅ Action Router Repair
 
+✅ SCOUT State Persistence Verification
+
+✅ SCOUT Prototype V2 Movement Event Detection
+
 ---
 
 ## Runtime Verified
-
-SCOUT-owned state successfully persists inside the existing ACTIVE plan lifecycle.
 
 Verified persistent fields:
 
@@ -125,23 +94,21 @@ scoutState
 
 scoutObserveCycles
 
-Runtime verified sequence:
+scoutMovementState
 
-OBSERVE cycle 1
-↓
-OBSERVE cycle 2
-↓
-OBSERVE → REPORT
-↓
-REPORT completion
-↓
-COMPLETE
-↓
-Terminal Cleanup
+Verified movement states:
+
+STATIONARY
+
+MOVING
+
+Verified information event:
+
+STATIONARY_TO_MOVING
 
 Verified architectural conclusion:
 
-Plan-owned storage supports persistent SCOUT controller state across multiple scheduler cycles.
+Plan-owned controller state supports information-event processing across ACTIVE scheduler cycles.
 
 No framework redesign required.
 
@@ -155,69 +122,54 @@ Cleanup ownership unchanged.
 
 # Current Development Frontier
 
-The SCOUT persistence hypothesis has been runtime verified.
+Movement-event persistence has been verified.
 
-The next objective is no longer proving persistence.
+Basic movement-event detection has been verified.
 
-The next objective is replacing the temporary observe-cycle counter with the first real SCOUT decision behavior.
-
-Current prototype:
+Current verified behavior:
 
 OBSERVE
 ↓
-Counter
+Movement Evaluation
+↓
+Event Detection
 ↓
 REPORT
-↓
-COMPLETE
 
 Future direction:
 
 OBSERVE
 ↓
-Evaluate
+Information Evaluation
 ↓
-Decide
+Decision
 ↓
 REPORT
-↓
-COMPLETE
 
-The smallest viable real-world behavior should be implemented first.
+The smallest meaningful intelligence behavior should be implemented next.
 
-Favor simplification over expansion.
+Do not expand ownership without runtime evidence.
 
-Do not introduce new managers, controllers, ownership layers, or architecture unless runtime evidence identifies a specific unmet responsibility.
+Do not introduce new framework managers without demonstrated responsibility gaps.
 
 ---
 
 # Next Milestone
 
-SCOUT Prototype V2
+SCOUT Prototype V3
 
 Goal:
 
-Replace the temporary observation counter with the smallest real SCOUT decision behavior while preserving:
+Introduce the next information-evaluation behavior while preserving all verified lifecycle ownership.
 
-Plan ownership
+Possible candidates:
 
-Scheduler ownership
+- Intelligence value assessment
+- Observation quality assessment
+- Confidence evaluation
+- Information freshness evaluation
 
-executePlan ownership
-
-Cleanup ownership
-
-Verified lifecycle:
-
-MOVE_TO_INTERCEPT
-↓
-RECON
-↓
-ACTIVE
-↓
-REPORT
-↓
-COMPLETE
+The next milestone should remain intentionally small and runtime testable.
 
 ---
 
@@ -229,4 +181,12 @@ Observe
 ↓
 Maintain Awareness
 ↓
+Evaluate
+↓
 Verify
+↓
+Adapt
+↓
+Report
+↓
+Support Autonomous Battlefield Decisions
