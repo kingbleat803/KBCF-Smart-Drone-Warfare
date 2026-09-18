@@ -63,3 +63,30 @@ Munition not deployed.
 
 Status:
 Investigation pending.
+---------------------------
+VERIFIED
+
+Plan-owned storage supports persistent
+SCOUT controller state across ACTIVE
+scheduler cycles.
+
+Verified Fields:
+
+scoutState
+scoutObserveCycles
+
+Verified Runtime Sequence:
+
+MOVE_TO_INTERCEPT
+↓
+RECON
+↓
+OBSERVE cycle 1
+↓
+OBSERVE cycle 2
+↓
+REPORT
+↓
+COMPLETE
+↓
+Cleanup

@@ -62,19 +62,13 @@ if (_actionType isEqualTo "") exitWith
         _actionType
     ]
 ] call KBCF_fnc_log;
-
 private _result = switch (_actionType) do
 {
-    //
-        //Existing Action Set
-    //
+    /*
+        Existing Action Set
+    */
 
-     ["replanRequired", true],
-    ["reason", "UNKNOWN"]
-];
-
-if (isNull _drone) exitWith
-{   case "MOVE_TO_INTERCEPT":
+    case "MOVE_TO_INTERCEPT":
     {
         [
             _drone,
@@ -118,10 +112,6 @@ if (isNull _drone) exitWith
             _plan
         ] call KBCF_fnc_actionReposition
     };
-
-    /*
-        Generation 9 Terminal Actions
-    */
 
     case "ATTACK":
     {
