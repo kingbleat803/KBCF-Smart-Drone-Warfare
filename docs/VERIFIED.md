@@ -1,6 +1,6 @@
-# VERIFIED RUNTIME CHECKPOINTS
+## VERIFIED RUNTIME CHECKPOINTS
 
-## Core Orchestration
+### Core Orchestration
 
 [PASS]
 
@@ -26,7 +26,7 @@ Runtime verified in Arma.
 
 --------------------------------
 
-## Physical UAV Movement
+### Physical UAV Movement
 
 [PASS]
 
@@ -44,7 +44,7 @@ Runtime verified in Arma.
 
 --------------------------------
 
-## SHADOW Controller
+### SHADOW Controller
 
 [PASS]
 
@@ -58,11 +58,15 @@ Runtime verified in Arma.
 
 --------------------------------
 
-## SCOUT State Persistence
+### SCOUT State Persistence
 
 [PASS]
 
-Plan-owned storage supports persistent SCOUT controller state across ACTIVE scheduler cycles.
+VERIFIED
+
+Plan-owned storage supports persistent
+SCOUT controller state across ACTIVE
+scheduler cycles.
 
 Verified Fields:
 
@@ -76,9 +80,9 @@ MOVE_TO_INTERCEPT
 ↓
 RECON
 ↓
-OBSERVE
+OBSERVE cycle 1
 ↓
-OBSERVE
+OBSERVE cycle 2
 ↓
 REPORT
 ↓
@@ -86,17 +90,33 @@ COMPLETE
 ↓
 Cleanup
 
-Conclusion:
+Verified Conclusion:
 
-SCOUT-owned state persists inside the existing ACTIVE plan lifecycle.
+Plan-owned storage successfully supports
+persistent SCOUT controller state across
+multiple ACTIVE scheduler cycles.
+
+Persistent SCOUT state operates inside
+the existing ACTIVE lifecycle.
 
 No framework redesign required.
 
+Scheduler ownership unchanged.
+
+executePlan ownership unchanged.
+
+Cleanup ownership unchanged.
+
 --------------------------------
 
-## SCOUT Prototype V2 Movement Event Detection
+### SCOUT Prototype V2 Movement Event Detection
 
 [PASS]
+
+VERIFIED
+
+Plan-owned storage supports movement-state
+evaluation across ACTIVE scheduler cycles.
 
 Verified Fields:
 
@@ -116,12 +136,6 @@ MovementState Updated
 
 Information Event Detected | STATIONARY_TO_MOVING
 
-Verified Classifications:
-
-STATIONARY
-
-MOVING
-
 Verified Runtime Sequence:
 
 Fresh Contact Refresh
@@ -134,13 +148,26 @@ Movement Comparison
 ↓
 STATIONARY_TO_MOVING Event Detection
 
+Verified Classifications:
+
+STATIONARY
+
+MOVING
+
+Verified Information Event:
+
+STATIONARY_TO_MOVING
+
 Verified Conclusion:
 
-Movement-state information can persist and evolve within the existing ACTIVE plan lifecycle.
+Movement-state information can persist
+and evolve within the existing ACTIVE
+plan lifecycle.
 
-Plan-owned storage supports movement-state memory.
+Plan-owned storage successfully supports
+movement-event evaluation.
 
-Refresh-gated evaluation functions correctly.
+Plan ownership unchanged.
 
 Scheduler ownership unchanged.
 
@@ -148,9 +175,11 @@ executePlan ownership unchanged.
 
 Cleanup ownership unchanged.
 
+No framework redesign required.
+
 --------------------------------
 
-## Known Broken
+### Known Broken
 
 [FAIL]
 

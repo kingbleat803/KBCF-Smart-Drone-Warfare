@@ -1,6 +1,6 @@
-# KBCF Change Log
+## KBCF Change Log
 
-## Purpose
+### Purpose
 
 This document records historical project milestones.
 
@@ -17,11 +17,9 @@ Historical entries must not be interpreted as current runtime verification.
 
 Current runtime status is tracked separately in Development_State.md.
 
----
+## Major Milestones
 
-# Major Milestones
-
-## Milestone: Core Orchestration Framework
+### Milestone: Core Orchestration Framework
 
 Status:
 
@@ -41,7 +39,7 @@ Repository documentation records historical runtime validation of the core orche
 
 ---
 
-## Milestone: Autonomous Orchestration
+### Milestone: Autonomous Orchestration
 
 Status:
 
@@ -61,7 +59,7 @@ Current runtime status requires fresh verification.
 
 ---
 
-## Milestone: SHADOW Runtime Checkpoint
+### Milestone: SHADOW Runtime Checkpoint
 
 Status:
 
@@ -73,7 +71,7 @@ Current runtime status remains unknown until retested.
 
 ---
 
-## Milestone: FPV_STRIKE Runtime Checkpoint
+### Milestone: FPV_STRIKE Runtime Checkpoint
 
 Status:
 
@@ -94,7 +92,7 @@ Current runtime status remains unknown until retested.
 
 ---
 
-## Milestone: Controller Design Workflow Adoption
+### Milestone: Controller Design Workflow Adoption
 
 Status:
 
@@ -118,7 +116,7 @@ This milestone marked the shift from framework creation toward controller behavi
 
 ---
 
-## Milestone: SCOUT State Persistence Verification
+### Milestone: SCOUT State Persistence Verification
 
 Status:
 
@@ -126,7 +124,7 @@ Historical runtime milestone
 
 Objective:
 
-Determine whether SCOUT-owned controller state could persist inside the existing ACTIVE plan lifecycle without introducing new framework ownership layers.
+Determine whether SCOUT-owned controller state could persist inside the existing ACTIVE plan lifecycle without introducing additional ownership layers.
 
 Runtime verified sequence:
 
@@ -144,56 +142,69 @@ COMPLETE
 ↓
 Terminal Cleanup
 
-Verified persistent fields:
+Verified Findings:
 
-scoutState
+Plan HashMap storage persisted SCOUT-owned data.
 
-scoutObserveCycles
+scoutState persisted across scheduler cycles.
 
-Verified conclusions:
+scoutObserveCycles persisted across scheduler cycles.
 
-- Plan HashMap storage persisted SCOUT-owned controller state.
-- executePlan ownership remained unchanged.
-- Scheduler ownership remained unchanged.
-- Cleanup ownership remained unchanged.
-- Reservation cleanup remained intact.
-- No additional lifecycle owner was required.
+executePlan retained ownership of plan completion.
 
-Architectural conclusion:
+scheduler retained ownership of cleanup.
 
-Persistent SCOUT controller behavior operates within the existing ACTIVE lifecycle.
+Reservation cleanup remained intact.
 
-No framework redesign required.
+No additional lifecycle owner was required.
+
+Verified Conclusion:
+
+SCOUT-owned state persistence inside the existing ACTIVE plan lifecycle is runtime verified.
+
+No framework redesign is required to support persistent SCOUT controller behavior.
 
 ---
 
-## Milestone: Action Router Recovery
+### Milestone: Action Router Recovery
 
 Status:
 
 Historical repository milestone
+
+Problem:
 
 fn_executeAction contained a corrupted action router.
 
 Repair restored:
 
 MOVE_TO_INTERCEPT
-↓
+
 Engine Start
-↓
+
 Takeoff
-↓
+
 Navigation
-↓
+
 Action Routing
 
-Verified result:
+Verified Result:
 
 Physical UAV movement resumed through the intended execution path.
 
+The execution path:
+
+executePlan
+↓
+executeAction
+↓
+Action Handler
+
+was successfully restored.
+
 ---
 
-## Milestone: SCOUT Prototype V2 Movement Event Detection
+### Milestone: SCOUT Prototype V2 Movement Event Detection
 
 Status:
 
@@ -201,30 +212,18 @@ Historical runtime milestone
 
 Objective:
 
-Replace the pure observe-counter persistence test with the first runtime-verifiable information-event behavior.
+Expand beyond persistence verification and implement the first runtime-verifiable SCOUT information-event behavior.
 
 Implemented:
 
 - scoutMovementState
 - Refresh-gated movement evaluation
 - Horizontal speed classification
-- STATIONARY state
-- MOVING state
+- STATIONARY classification
+- MOVING classification
 - STATIONARY_TO_MOVING information event detection
 
-Runtime verified behavior:
-
-Fresh Contact Refresh
-↓
-Movement Evaluation
-↓
-Movement Classification
-↓
-State Comparison
-↓
-Information Event Detection
-
-Verified runtime evidence:
+Runtime verified evidence:
 
 MovementState Initialized
 
@@ -244,42 +243,39 @@ Verified information event:
 
 STATIONARY_TO_MOVING
 
-Architectural conclusions:
+Verified conclusion:
 
-- Movement-state information persisted on the active plan.
-- Plan-owned SCOUT state successfully evolved across ACTIVE scheduler cycles.
-- Scheduler ownership remained unchanged.
-- executePlan ownership remained unchanged.
-- Cleanup ownership remained unchanged.
-- No framework redesign was required.
+Movement-state information can persist and evolve inside the existing ACTIVE plan lifecycle.
+
+Plan-owned storage supports movement-state evaluation.
+
+Plan ownership unchanged.
+
+Scheduler ownership unchanged.
+
+executePlan ownership unchanged.
+
+Cleanup ownership unchanged.
+
+No framework redesign required.
 
 This milestone established the first runtime-verified SCOUT information-event capability.
 
 ---
 
-## Current Frontier
+### Current Frontier
 
 See:
 
 - WelcomeBackNotes.md
+- Doctrine.md
 - Development_State.md
 - ROADMAP.md
 
-Current development focus:
-
-SCOUT Prototype V3
+for current project status.
 
 The persistence question has been answered.
 
-The movement-event question has been answered.
+The first movement-event detection question has been answered.
 
-The next development objective is determining what information SCOUT should evaluate after movement-state detection.
-
-Future candidate areas include:
-
-- Information value evaluation
-- Observation quality evaluation
-- Confidence evaluation
-- Intelligence freshness evaluation
-
-Future work should preserve the verified lifecycle and ownership model unless runtime evidence demonstrates a genuine architectural requirement.
+Current development focus is identifying the next meaningful intelligence-evaluation behavior while preserving the verified lifecycle and ownership model.

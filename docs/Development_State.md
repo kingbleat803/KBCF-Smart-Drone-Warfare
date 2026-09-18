@@ -1,6 +1,6 @@
-# KBCF Development State
+## KBCF Development State
 
-## Purpose
+### Purpose
 
 This document records the current development board for KBCF.
 
@@ -16,9 +16,7 @@ This document is not a changelog.
 
 This document represents the current project board.
 
----
-
-# Project Context
+## Project Context
 
 KBCF and Smart Drone Warfare are exclusively an open-source Arma 3 SQF gameplay, AI orchestration, and autonomous asset framework project.
 
@@ -26,24 +24,20 @@ All drones, contacts, commanders, planners, targets, missions, actions, controll
 
 Repository implementation and Arma runtime evidence define project reality.
 
----
+## Source Of Truth Hierarchy
 
-# Source Of Truth Hierarchy
-
-1. Current Arma Runtime Evidence
-2. Current Repository Implementation
-3. Current Repository Documentation
-4. Historical Runtime Records
-5. Previous Checkpoints
-6. Speculation
+- Current Arma Runtime Evidence
+- Current Repository Implementation
+- Current Repository Documentation
+- Historical Runtime Records
+- Previous Checkpoints
+- Speculation
 
 Runtime evidence is final authority.
 
 Documentation should reflect runtime where possible.
 
----
-
-# Current Project Stage
+## Current Project Stage
 
 The project has moved beyond proving that the orchestration framework can function.
 
@@ -69,38 +63,50 @@ The primary development focus is no longer framework creation.
 
 The primary development focus is controller behavior and doctrine implementation inside the verified lifecycle.
 
----
+## Runtime Verified Systems
 
-# Runtime Verified Systems
-
-## Core Orchestration
+### Core Orchestration
 
 VERIFIED
 
 Blackboard creation
+
 Contact storage
+
 Contact updates
+
 Target classification
+
 Threat evaluation
+
 Target selection
+
 Reservation system
+
 Assignment system
+
 Plan generation
+
 Plan activation
+
 Scheduler orchestration
+
 Terminal cleanup
+
 Automatic retasking
 
----
-
-## Physical UAV Control
+### Physical UAV Control
 
 VERIFIED
 
 Engine startup
+
 Takeoff
+
 Intercept navigation
+
 Intercept arrival detection
+
 Terminal action transitions
 
 Verified sequence:
@@ -117,11 +123,11 @@ Intercept Reached
 ↓
 Terminal Action
 
----
-
-## Action Routing
+### Action Routing
 
 VERIFIED
+
+The shared execution route is:
 
 executePlan
 ↓
@@ -129,25 +135,31 @@ executeAction
 ↓
 Action Handler
 
-Runtime verified:
+Fresh runtime verification established successful dispatch for:
 
 MOVE_TO_INTERCEPT
+
 RECON
 
-Repository routes exist for:
+The repository also contains routes for:
 
 ATTACK
+
 GRENADE_DROP
+
 SHADOW
+
 TRACK
+
 OBSERVE
+
 REPOSITION
 
-Repository presence does not establish runtime verification.
+Repository presence does not establish fresh runtime success for those handlers.
 
----
+Current profile-specific runtime status must be tracked separately in VERIFIED.md.
 
-## SCOUT State Persistence
+### SCOUT State Persistence
 
 VERIFIED
 
@@ -156,53 +168,47 @@ Plan-owned storage successfully supports persistent SCOUT controller state acros
 Verified fields:
 
 scoutState
+
 scoutObserveCycles
 
-Verified sequence:
+Verified runtime sequence:
 
-OBSERVE
+OBSERVE cycle 1
 ↓
-OBSERVE
+OBSERVE cycle 2
 ↓
 REPORT
 ↓
 COMPLETE
+↓
+Terminal Cleanup
 
 Verified conclusion:
 
-Persistent SCOUT controller behavior can operate inside the existing ACTIVE lifecycle.
+Persistent SCOUT state can operate inside the existing ACTIVE plan lifecycle.
 
 No framework redesign required.
 
----
+Scheduler ownership unchanged.
 
-## SCOUT Prototype V2
+executePlan ownership unchanged.
+
+Cleanup ownership unchanged.
+
+### SCOUT Prototype V2 Movement Event Detection
 
 VERIFIED
 
-Prototype V2 replaced the pure observation-counter test with the first runtime-verified information event evaluation.
+Prototype V2 replaced the pure observation-counter persistence test with the first runtime-verified SCOUT information-event behavior.
 
-Verified fields:
+Verified field:
 
-scoutState
-scoutObserveCycles
 scoutMovementState
 
-Verified behavior:
-
-Fresh Contact Refresh
-↓
-Movement Evaluation
-↓
-Movement Classification
-↓
-State Comparison
-↓
-Information Event Detection
-
-Verified movement classifications:
+Verified classifications:
 
 STATIONARY
+
 MOVING
 
 Verified information event:
@@ -212,43 +218,50 @@ STATIONARY_TO_MOVING
 Verified runtime evidence:
 
 MovementState Initialized
+
 MovementState Check
+
 MovementState Updated
+
 Information Event Detected | STATIONARY_TO_MOVING
 
-Current ownership:
+Verified conclusion:
 
-scoutMovementState is stored on the active plan.
+Movement-event evaluation operates successfully inside the existing ACTIVE plan lifecycle.
 
-State persists across ACTIVE cycles.
+Plan-owned storage supports movement-state persistence and comparison.
 
-State is removed when plan cleanup occurs.
+Plan ownership unchanged.
 
 Scheduler ownership unchanged.
+
 executePlan ownership unchanged.
+
 Cleanup ownership unchanged.
 
----
+No framework redesign required.
 
-# Current SCOUT State
+## Current SCOUT State
 
-## Verified
+### Verified
 
 SCOUT Ownership Audit
 
-SCOUT Specification Draft
+SCOUT Controller Specification V1 Draft
 
-SCOUT Pseudocode V1
+SCOUT Controller Pseudocode V1
 
-SCOUT Pseudocode V2
+SCOUT Controller Pseudocode V2
+
+SCOUT State Integration Prototype
 
 SCOUT State Persistence Verification
 
 SCOUT Prototype V2 Movement Event Detection
 
----
+### Prototype Currently Implemented
 
-## Current Prototype
+Current prototype behavior:
 
 MOVE_TO_INTERCEPT
 ↓
@@ -262,25 +275,29 @@ REPORT
 ↓
 COMPLETE
 
-Current movement evaluation:
+Current verified movement evaluation:
 
-- Refresh-gated
-- Horizontal speed based
+- Refresh-gated evaluation
+- Horizontal speed classification
 - STATIONARY classification
 - MOVING classification
 - STATIONARY_TO_MOVING detection
 
----
+The observe counter remains as a bounded prototype mechanism supporting state progression.
 
-## Not Yet Implemented
+The observe counter is not doctrine.
+
+The observe counter is not intended final gameplay behavior.
+
+### Not Yet Implemented
 
 Risk Engine
 
 Confidence Engine
 
-Observation Quality Evaluation
+Position Selection
 
-Intelligence Value Evaluation
+Position Scoring
 
 SEARCH
 
@@ -290,23 +307,27 @@ INVESTIGATE
 
 BDA
 
+Multi-contact Intelligence Evaluation
+
+Observation Quality Assessment
+
 Adaptive Repositioning
 
-Multi-Contact Intelligence Evaluation
+Intelligence Requirement Completion Logic
 
-Mission Completion Evaluation Based On Information Quality
+MOVING_TO_STATIONARY information event detection
 
-MOVING_TO_STATIONARY information events
+Information quality evaluation
 
-Advanced movement behavior analysis
+Confidence accumulation logic
 
----
+These remain future controller work.
 
-# Current Development Frontier
+## Current Development Frontier
 
 The persistence question has been answered.
 
-The first information-event question has also been answered.
+The first movement-event detection question has been answered.
 
 The next question is no longer:
 
@@ -318,43 +339,47 @@ Can SCOUT detect a movement event?
 
 The next question is:
 
-What information should SCOUT evaluate next?
+What information should SCOUT evaluate after movement classification and event detection?
 
 Current verified behavior:
 
-Observe
+OBSERVE
 ↓
-Classify Movement
+Movement Evaluation
 ↓
-Detect Event
+Event Detection
 ↓
-Report
+REPORT
 
 Future direction:
 
-Observe
+OBSERVE
 ↓
-Evaluate Information Value
+Evaluate
 ↓
 Decide
 ↓
-Report
+REPORT
 
----
+The next behavior should be intentionally small and runtime testable.
 
-# Current Unknowns
+Do not expand architecture without evidence.
+
+Prefer improving behavior within the verified lifecycle.
+
+## Current Unknowns
+
+Best observation-position selection method
 
 Observation quality evaluation
 
-Intelligence value scoring
+Information quality evaluation
 
 Confidence accumulation
 
 Confidence decay
 
-Information saturation
-
-Mission completion thresholds
+Intelligence requirement completion thresholds
 
 Threat-based reposition thresholds
 
@@ -364,15 +389,13 @@ Performance at scale
 
 Large multiplayer behavior
 
----
-
-# Immediate Milestone
+## Immediate Milestone
 
 SCOUT Prototype V3
 
 Goal:
 
-Expand beyond movement-event detection into meaningful intelligence evaluation while preserving the verified lifecycle.
+Expand beyond movement-event detection into the next runtime-verifiable SCOUT intelligence behavior.
 
 Must preserve:
 
@@ -384,7 +407,7 @@ Scheduler ownership
 
 Cleanup ownership
 
-Verified lifecycle:
+Current verified lifecycle:
 
 MOVE_TO_INTERCEPT
 ↓
@@ -392,15 +415,15 @@ RECON
 ↓
 ACTIVE
 ↓
+Movement Evaluation
+↓
 REPORT
 ↓
 COMPLETE
 
 No new lifecycle owners should be introduced without runtime evidence.
 
----
-
-# Current Board
+## Current Board
 
 VERIFIED
 
