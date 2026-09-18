@@ -152,16 +152,26 @@ See individual documents for detailed implementation information.
 
 ## Current Focus
 
-The framework itself has been validated.
+The framework itself has been runtime verified.
 
-Current development is focused on:
+Current development is focused on controller doctrine implementation.
 
-- Automatic drone discovery and registration
-- Post-mission drone behavior
-- Recon doctrine
-- Target revisit policy
+Current active profile:
+
+SCOUT
+
+Current profile goal:
+
+Complete SCOUT doctrine implementation and runtime verification.
+
+Current development proceeds through small runtime-verifiable behavior increments.
+
+Future profile work includes:
+
+- FPV_STRIKE doctrine creation and implementation
+- BOMBER doctrine creation and implementation
+- Additional controller behaviors
 - Multi-asset coordination
-- Additional KBCF modules
 
 ---
 
