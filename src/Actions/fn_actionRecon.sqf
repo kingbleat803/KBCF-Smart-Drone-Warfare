@@ -146,78 +146,220 @@ if (_scoutState isEqualTo "") then
 switch (_scoutState) do
 {
     case "OBSERVE":
-    {
-        /*
-            Preserve the existing recon scan and scan range.
-        */
+{
+    /*
+        Capture freshness before scan.
+    */
+    private _lastSeenBefore =
+        _contact getOrDefault
         [
-            _drone,
-            1000
-        ] call KBCF_fnc_reconScan;
-
-        private _scoutObserveCycles =
-            _plan getOrDefault
-            [
-                "scoutObserveCycles",
-                0
-            ];
-
-        _scoutObserveCycles =
-            _scoutObserveCycles + 1;
-
-        _plan set
-        [
-            "scoutObserveCycles",
-            _scoutObserveCycles
+            "lastSeen",
+            -1
         ];
 
-        [
-            "SCOUT",
-            format
-            [
-                "Prototype OBSERVE cycle %1 | Drone:%2",
-                _scoutObserveCycles,
-                netId _drone
-            ]
-        ] call KBCF_fnc_log;
+    /*
+        Preserve the existing recon scan and scan range.
+    */
+    [
+        _drone,
+        1000
+    ] call KBCF_fnc_reconScan;
 
-        if
-        (
-            _scoutObserveCycles
-            >=
-            _prototypeObserveCycleLimit
-        )
-        then
+    /*
+        Capture freshness after scan.
+    */
+    private _lastSeenAfter =
+        _contact getOrDefault
+        [
+            "lastSeen",
+            -1
+        ];
+
+    private _wasRefreshed =
+        _lastSeenAfter > _lastSeenBefore;
+
+    /*
+        Prototype V2 movement-event evaluation.
+        Only execute if this assigned contact
+        was refreshed during this scan.
+    */
+    if (_wasRefreshed) then
+    {
+        private _velocity =
+            _contact getOrDefault
+            [
+                "velocity",
+                [0,0,0]
+            ];
+
+        private _vx = _velocity select 0;
+        private _vy = _velocity select 1;
+
+        /*
+            Horizontal speed only.
+            Vertical movement is ignored.
+        */
+        private _horizontalSpeed =
+            sqrt
+            (
+                (_vx * _vx)
+                +
+                (_vy * _vy)
+            );
+
+        private _currentMovementState = "STATIONARY";
+
+        /*
+            Prototype-only threshold.
+        */
+        if (_horizontalSpeed >= 1.0) then
+        {
+            _currentMovementState = "MOVING";
+        };
+
+        private _scoutMovementState =
+            _plan getOrDefault
+            [
+                "scoutMovementState",
+                ""
+            ];
+
+        /*
+            First fresh observation creates
+            the baseline only.
+        */
+        if (_scoutMovementState isEqualTo "") then
         {
             _plan set
             [
-                "scoutState",
-                "REPORT"
+                "scoutMovementState",
+                _currentMovementState
             ];
-
-            _result set ["success", true];
-            _result set ["completed", false];
-            _result set ["replanRequired", false];
-            _result set ["reason", "SCOUT_TRANSITION_REPORT"];
 
             [
                 "SCOUT",
                 format
                 [
-                    "Prototype OBSERVE to REPORT transition | Drone:%1 | ObserveCycles:%2",
-                    netId _drone,
-                    _scoutObserveCycles
+                    "MovementState Initialized | State:%1 | Speed:%2 | Drone:%3",
+                    _currentMovementState,
+                    _horizontalSpeed,
+                    netId _drone
                 ]
             ] call KBCF_fnc_log;
         }
         else
         {
-            _result set ["success", true];
-            _result set ["completed", false];
-            _result set ["replanRequired", false];
-            _result set ["reason", "SCOUT_OBSERVING"];
+            [
+                "SCOUT",
+                format
+                [
+                    "MovementState Check | Previous:%1 | Current:%2 | Speed:%3 | Drone:%4",
+                    _scoutMovementState,
+                    _currentMovementState,
+                    _horizontalSpeed,
+                    netId _drone
+                ]
+            ] call KBCF_fnc_log;
+
+            if
+            (
+                (_scoutMovementState isEqualTo "STATIONARY")
+                &&
+                (_currentMovementState isEqualTo "MOVING")
+            )
+            then
+            {
+                [
+                    "SCOUT",
+                    format
+                    [
+                        "Information Event Detected | STATIONARY_TO_MOVING | Drone:%1",
+                        netId _drone
+                    ]
+                ] call KBCF_fnc_log;
+            };
+
+            _plan set
+            [
+                "scoutMovementState",
+                _currentMovementState
+            ];
+
+            [
+                "SCOUT",
+                format
+                [
+                    "MovementState Updated | State:%1 | Drone:%2",
+                    _currentMovementState,
+                    netId _drone
+                ]
+            ] call KBCF_fnc_log;
         };
     };
+
+    private _scoutObserveCycles =
+        _plan getOrDefault
+        [
+            "scoutObserveCycles",
+            0
+        ];
+
+    _scoutObserveCycles =
+        _scoutObserveCycles + 1;
+
+    _plan set
+    [
+        "scoutObserveCycles",
+        _scoutObserveCycles
+    ];
+
+    [
+        "SCOUT",
+        format
+        [
+            "Prototype OBSERVE cycle %1 | Drone:%2",
+            _scoutObserveCycles,
+            netId _drone
+        ]
+    ] call KBCF_fnc_log;
+
+    if
+    (
+        _scoutObserveCycles
+        >=
+        _prototypeObserveCycleLimit
+    )
+    then
+    {
+        _plan set
+        [
+            "scoutState",
+            "REPORT"
+        ];
+
+        _result set ["success", true];
+        _result set ["completed", false];
+        _result set ["replanRequired", false];
+        _result set ["reason", "SCOUT_TRANSITION_REPORT"];
+
+        [
+            "SCOUT",
+            format
+            [
+                "Prototype OBSERVE to REPORT transition | Drone:%1 | ObserveCycles:%2",
+                netId _drone,
+                _scoutObserveCycles
+            ]
+        ] call KBCF_fnc_log;
+    }
+    else
+    {
+        _result set ["success", true];
+        _result set ["completed", false];
+        _result set ["replanRequired", false];
+        _result set ["reason", "SCOUT_OBSERVING"];
+    };
+};
 
     case "REPORT":
     {
