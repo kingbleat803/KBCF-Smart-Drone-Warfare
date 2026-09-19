@@ -233,3 +233,64 @@ Munition not deployed.
 Status:
 
 Investigation pending.
+-----------------------
+ ## SCOUT Observation Condition V1
+
+VERIFIED:
+
+- Observation-condition evaluation executed during RECON.
+- Observation condition persisted on the active plan.
+- CURRENT classification runtime verified.
+- DEGRADED classification runtime verified.
+- DEGRADED → CURRENT transition runtime verified.
+- ObservationCondition Initialized runtime verified.
+- ObservationCondition Check runtime verified.
+- ObservationCondition Transition runtime verified.
+- Fresh observation-condition initialization across separate plans runtime verified.
+- No cross-plan observation-condition state leakage observed.
+
+Runtime Evidence:
+
+ObservationCondition Initialized
+Condition:CURRENT
+Reason:CONTACT_TRACK_CURRENT
+TrackQuality:80
+Confidence:99
+
+ObservationCondition Transition
+Previous:DEGRADED
+Current:CURRENT
+Reason:CONTACT_TRACK_CURRENT
+TrackQuality:80
+Confidence:100
+
+Verified Runtime Observations:
+
+- Existing contact intelligence inputs were consumed:
+  - confidence
+  - trackQuality
+  - trackAge
+  - freshness (lastSeen)
+  - alive state
+
+- TrackQuality increased from 80 to 100 when the observed vehicle transitioned from stationary to moving.
+
+- Existing V3 movement-state detection remained functional.
+- STATIONARY_TO_MOVING detection remained functional.
+- Observation-event storage remained functional.
+- REPORT consumption remained functional.
+- REPORT publication remained functional.
+- Plan completion remained functional.
+- Cleanup remained functional.
+- Automatic retasking remained functional.
+
+- No V3 regression observed.
+- No lifecycle regression observed.
+
+NOT YET VERIFIED:
+
+- LOST classification
+- CURRENT → LOST transition
+- DEGRADED → LOST transition
+- LOST → DEGRADED transition
+- LOST → CURRENT transition

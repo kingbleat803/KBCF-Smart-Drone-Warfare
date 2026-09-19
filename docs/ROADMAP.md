@@ -170,26 +170,7 @@ Maintain Awareness
 Evaluate
 ↓
 Verify
-↓
-Adapt
-↓
-Report
-↓
-Support Autonomous Battlefield Decisions
-
-#### Project Completion Criteria
-
-Current profile:
-SCOUT
-
-Completed SCOUT milestones:
-✅ State Persistence
-✅ V2 Movement Event Detection
-✅ V3 Observation Event Reporting
-
-SCOUT completion:
-⬜ Doctrine Implementation Complete
-⬜ Full Runtime Verification Complete
+↓⬜ Full Runtime Verification Complete
 
 FPV completion:
 ⬜ Doctrine Created
@@ -208,3 +189,22 @@ Further Project Completion:
 ⬜ BOMBER Complete
 ⬜ Documentation Complete
 ⬜ Release Candidate Ready
+
+Adapt
+↓
+Report
+↓
+Support Autonomous Battlefield Decisions
+
+#### Project Completion Criteria
+
+Current profile:
+SCOUT
+
+Completed SCOUT milestones:
+✅ State Persistence
+✅ V2 Movement Event Detection
+✅ V3 Observation Event Reporting
+
+SCOUT completion:
+⬜ Doctrine Implementation Complete
