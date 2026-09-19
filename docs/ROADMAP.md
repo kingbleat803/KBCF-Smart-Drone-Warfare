@@ -170,26 +170,7 @@ Maintain Awareness
 Evaluate
 ↓
 Verify
-↓⬜ Full Runtime Verification Complete
-
-FPV completion:
-⬜ Doctrine Created
-⬜ Implementation Complete
-⬜ Runtime Verified
-
-BOMBER completion:
-⬜ Doctrine Created
-⬜ Implementation Complete
-⬜ Runtime Verified
-
-Further Project Completion:
-
-⬜ SCOUT Complete
-⬜ FPV Complete
-⬜ BOMBER Complete
-⬜ Documentation Complete
-⬜ Release Candidate Ready
-
+↓
 Adapt
 ↓
 Report
@@ -208,3 +189,22 @@ Completed SCOUT milestones:
 
 SCOUT completion:
 ⬜ Doctrine Implementation Complete
+⬜ Full Runtime Verification Complete
+
+FPV completion:
+⬜ Doctrine Created
+⬜ Implementation Complete
+⬜ Runtime Verified
+
+BOMBER completion:
+⬜ Doctrine Created
+⬜ Implementation Complete
+⬜ Runtime Verified
+
+Further Project Complete
+
+⬜ SCOUT Complete
+⬜ FPV Complete
+⬜ BOMBER Complete
+⬜ Documentation Complete
+⬜ Release Candidate Ready

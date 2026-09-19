@@ -84,6 +84,7 @@ class CfgFunctions
             class actionReposition {};
             class actionAbort {};
             class actionRecon {};
+            class applyScoutObservationBehavior {};
             class actionAttack {};
             class actionGrenadeDrop {};
         };

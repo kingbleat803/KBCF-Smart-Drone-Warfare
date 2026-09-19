@@ -306,7 +306,24 @@ No framework redesign was required.
 This milestone established the first
 runtime-verified SCOUT observation-event
 reporting capability.
+-------------------------------
+Latest Runtime Verification
 
+- ObservationCondition instrumentation functioning.
+- MovementState instrumentation functioning.
+- STATIONARY_TO_MOVING detection functioning.
+- ObservationEvent pipeline functioning.
+- REPORT pipeline functioning.
+
+Audit Findings
+
+- Blackboard stale-contact cleanup is driven by
+  confidence decay from lastSeen.
+- Contacts expire after approximately five minutes
+  without refresh.
+- Observed stale-contact behavior was existing
+  framework behavior, not a regression introduced
+  by the new patch.
 ### Current Frontier
 
 See:

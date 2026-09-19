@@ -387,21 +387,20 @@ Large multiplayer behavior
 
 ### Immediate Milestone
 
-Next SCOUT behavior to be selected.
+Current milestone:
+SCOUT V3 Runtime Verified
 
-Selection criteria:
+Verified This Session:
+- V3 observation-event pipeline runtime verified.
+- Blackboard stale-contact investigation completed.
+- Root cause identified and audited in source.
+- No V3 regression detected.
 
-- Small
-- Runtime testable
-- Preserves verified lifecycle
-- Does not introduce new ownership
-
-Possible candidate directions:
-
-- MOVING_TO_STATIONARY detection
-- Information quality evaluation
-- Confidence evaluation
-- Observation quality assessment
+Current Frontier:
+- SCOUT doctrine evolution beyond V3.
+- Observation behavior quality.
+- SHADOW behavior refinement.
+- Future doctrine work: FPV and BOMBER.
 
 ### Current Board
 
@@ -435,3 +434,21 @@ BOMBER:
 
 Project completion:
 ⬜ Incomplete
+
+Latest Runtime Verification
+
+- ObservationCondition instrumentation functioning.
+- MovementState instrumentation functioning.
+- STATIONARY_TO_MOVING detection functioning.
+- ObservationEvent pipeline functioning.
+- REPORT pipeline functioning.
+
+Audit Findings
+
+- Blackboard stale-contact cleanup is driven by
+  confidence decay from lastSeen.
+- Contacts expire after approximately five minutes
+  without refresh.
+- Observed stale-contact behavior was existing
+  framework behavior, not a regression introduced
+  by the new patch.

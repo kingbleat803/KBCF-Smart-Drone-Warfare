@@ -2,33 +2,29 @@
     File: fn_actionRecon.sqf
 
     Description:
-    Bounded SCOUT observation-event prototype with V1
-    observation-condition instrumentation.
+    Integrated SCOUT doctrine candidate for assigned-target
+    observation inside the existing ACTIVE plan lifecycle.
 
-    Existing runtime-verified behavior is preserved:
+    Preserved verified behavior:
+    - Repeated RECON scanning
+    - Observation-condition evaluation
+    - Movement-state evaluation
+    - STATIONARY_TO_MOVING event storage
+    - REPORT event publication
+    - Plan completion through executePlan
 
-    OBSERVE
-    -> repeated ACTIVE executions
-    -> movement-state evaluation
-    -> optional STATIONARY_TO_MOVING event storage
-    -> REPORT
-    -> event publication
-    -> completed = true
+    Added player-visible doctrine behavior:
+    - CURRENT  -> SHADOW stand-off observation
+    - DEGRADED -> RECOVER closer observation position
+    - LOST     -> bounded SEARCH around predicted position
 
-    Added behavior:
+    This action does not alter scheduler, commander,
+    reservation, cleanup, or retasking ownership.
 
-    Each OBSERVE execution refreshes existing tracking data,
-    evaluates the assigned contact as CURRENT, DEGRADED, or
-    LOST, stores the result on the existing plan HashMap, and
-    logs initialization or transitions.
-
-    This patch is instrumentation-only. Observation condition
-    does not yet change movement, select SHADOW/TRACK/
-    REPOSITION, alter REPORT gating, or modify plan lifecycle.
-
-    Plan lifecycle interpretation remains owned by
-    KBCF_fnc_executePlan. Terminal cleanup remains owned by
-    KBCF_fnc_scheduler.
+    The current patch covers assigned-target SCOUT behavior.
+    Patrol without an assigned plan and service-cycle BDA are
+    intentionally not claimed because those flows are owned
+    outside this action by the current repository lifecycle.
 
     Returns:
     Action Result HashMap.
@@ -65,19 +61,15 @@ if (!alive _drone) exitWith
     _result
 };
 
-private _prototypeObserveCycleLimit = 20;
+private _observeCycleLimit =
+    _plan getOrDefault ["scoutObserveCycleLimit", 20];
 
 private _scoutState =
-    _plan getOrDefault
-    [
-        "scoutState",
-        ""
-    ];
+    _plan getOrDefault ["scoutState", ""];
 
 if (_scoutState isEqualTo "") then
 {
     _scoutState = "OBSERVE";
-
     _plan set ["scoutState", _scoutState];
     _plan set ["scoutObserveCycles", 0];
 };
@@ -87,81 +79,32 @@ switch (_scoutState) do
     case "OBSERVE":
     {
         private _lastSeenBefore =
-            _contact getOrDefault
-            [
-                "lastSeen",
-                -1
-            ];
+            _contact getOrDefault ["lastSeen", -1];
 
-        [
-            _drone,
-            1000
-        ] call KBCF_fnc_reconScan;
+        [_drone, 1000] call KBCF_fnc_reconScan;
 
         private _lastSeenAfter =
-            _contact getOrDefault
-            [
-                "lastSeen",
-                -1
-            ];
+            _contact getOrDefault ["lastSeen", -1];
 
         private _wasRefreshed =
             _lastSeenAfter > _lastSeenBefore;
 
-        /*
-            Refresh existing contact prediction, track age,
-            and track quality before evaluating observation
-            condition. This reuses the current repository's
-            tracking model rather than creating a second one.
-        */
         private _trackUpdated =
-        [
-            _contact
-        ] call KBCF_fnc_trackTarget;
+            [_contact] call KBCF_fnc_trackTarget;
 
         private _observationConditionResult =
-        [
-            _contact,
-            _plan
-        ] call KBCF_fnc_evaluateObservationCondition;
+            [_contact, _plan] call KBCF_fnc_evaluateObservationCondition;
 
         private _observationCondition =
-            _observationConditionResult getOrDefault
-            [
-                "condition",
-                "LOST"
-            ];
+            _observationConditionResult getOrDefault ["condition", "LOST"];
 
         private _previousObservationCondition =
-            _plan getOrDefault
-            [
-                "observationCondition",
-                ""
-            ];
+            _plan getOrDefault ["observationCondition", ""];
 
-        _plan set
-        [
-            "previousObservationCondition",
-            _previousObservationCondition
-        ];
-
-        _plan set
-        [
-            "observationCondition",
-            _observationCondition
-        ];
-
-        _plan set
-        [
-            "observationConditionResult",
-            _observationConditionResult
-        ];
-
-        _plan set
-        [
-            "observationConditionUpdatedAt",
-            serverTime
-        ];
+        _plan set ["previousObservationCondition", _previousObservationCondition];
+        _plan set ["observationCondition", _observationCondition];
+        _plan set ["observationConditionResult", _observationConditionResult];
+        _plan set ["observationConditionUpdatedAt", serverTime];
 
         if (_previousObservationCondition isEqualTo "") then
         {
@@ -221,30 +164,41 @@ switch (_scoutState) do
             };
         };
 
-        /*
-            Preserve V2 movement-event evaluation.
-            Only evaluate movement when the assigned contact
-            was refreshed during this scan.
-        */
+        private _behaviorResult =
+        [
+            _drone,
+            _contact,
+            _plan,
+            _observationCondition,
+            _wasRefreshed
+        ] call KBCF_fnc_applyScoutObservationBehavior;
+
+        _plan set ["lastScoutBehaviorResult", _behaviorResult];
+
+        if (!(_behaviorResult getOrDefault ["success", false])) then
+        {
+            [
+                "SCOUT",
+                format
+                [
+                    "Behavior Soft Failure | Mode:%1 | Reason:%2 | Drone:%3",
+                    _behaviorResult getOrDefault ["mode", "NONE"],
+                    _behaviorResult getOrDefault ["reason", "UNKNOWN"],
+                    netId _drone
+                ]
+            ] call KBCF_fnc_log;
+        };
+
         if (_wasRefreshed) then
         {
             private _velocity =
-                _contact getOrDefault
-                [
-                    "velocity",
-                    [0,0,0]
-                ];
+                _contact getOrDefault ["velocity", [0,0,0]];
 
             private _vx = _velocity select 0;
             private _vy = _velocity select 1;
 
             private _horizontalSpeed =
-                sqrt
-                (
-                    (_vx * _vx)
-                    +
-                    (_vy * _vy)
-                );
+                sqrt ((_vx * _vx) + (_vy * _vy));
 
             private _currentMovementState = "STATIONARY";
 
@@ -254,19 +208,11 @@ switch (_scoutState) do
             };
 
             private _scoutMovementState =
-                _plan getOrDefault
-                [
-                    "scoutMovementState",
-                    ""
-                ];
+                _plan getOrDefault ["scoutMovementState", ""];
 
             if (_scoutMovementState isEqualTo "") then
             {
-                _plan set
-                [
-                    "scoutMovementState",
-                    _currentMovementState
-                ];
+                _plan set ["scoutMovementState", _currentMovementState];
 
                 [
                     "SCOUT",
@@ -311,11 +257,7 @@ switch (_scoutState) do
                             ["currentState", _currentMovementState]
                         ];
 
-                    _plan set
-                    [
-                        "observationEvent",
-                        _observationEvent
-                    ];
+                    _plan set ["observationEvent", _observationEvent];
 
                     [
                         "SCOUT",
@@ -337,11 +279,7 @@ switch (_scoutState) do
                     ] call KBCF_fnc_log;
                 };
 
-                _plan set
-                [
-                    "scoutMovementState",
-                    _currentMovementState
-                ];
+                _plan set ["scoutMovementState", _currentMovementState];
 
                 [
                     "SCOUT",
@@ -356,44 +294,26 @@ switch (_scoutState) do
         };
 
         private _scoutObserveCycles =
-            _plan getOrDefault
-            [
-                "scoutObserveCycles",
-                0
-            ];
+            _plan getOrDefault ["scoutObserveCycles", 0];
 
-        _scoutObserveCycles =
-            _scoutObserveCycles + 1;
-
-        _plan set
-        [
-            "scoutObserveCycles",
-            _scoutObserveCycles
-        ];
+        _scoutObserveCycles = _scoutObserveCycles + 1;
+        _plan set ["scoutObserveCycles", _scoutObserveCycles];
 
         [
             "SCOUT",
             format
             [
-                "Prototype OBSERVE cycle %1 | Drone:%2",
+                "Integrated OBSERVE cycle %1 | Condition:%2 | Mode:%3 | Drone:%4",
                 _scoutObserveCycles,
+                _observationCondition,
+                _behaviorResult getOrDefault ["mode", "NONE"],
                 netId _drone
             ]
         ] call KBCF_fnc_log;
 
-        if
-        (
-            _scoutObserveCycles
-            >=
-            _prototypeObserveCycleLimit
-        )
-        then
+        if (_scoutObserveCycles >= _observeCycleLimit) then
         {
-            _plan set
-            [
-                "scoutState",
-                "REPORT"
-            ];
+            _plan set ["scoutState", "REPORT"];
 
             _result set ["success", true];
             _result set ["completed", false];
@@ -404,9 +324,11 @@ switch (_scoutState) do
                 "SCOUT",
                 format
                 [
-                    "Prototype OBSERVE to REPORT transition | Drone:%1 | ObserveCycles:%2",
+                    "Integrated OBSERVE to REPORT transition | Drone:%1 | ObserveCycles:%2 | FinalCondition:%3 | FinalMode:%4",
                     netId _drone,
-                    _scoutObserveCycles
+                    _scoutObserveCycles,
+                    _observationCondition,
+                    _behaviorResult getOrDefault ["mode", "NONE"]
                 ]
             ] call KBCF_fnc_log;
         }
@@ -422,18 +344,10 @@ switch (_scoutState) do
     case "REPORT":
     {
         private _observationEvent =
-            _plan getOrDefault
-            [
-                "observationEvent",
-                createHashMap
-            ];
+            _plan getOrDefault ["observationEvent", createHashMap];
 
         private _eventType =
-            _observationEvent getOrDefault
-            [
-                "eventType",
-                ""
-            ];
+            _observationEvent getOrDefault ["eventType", ""];
 
         if (_eventType != "") then
         {
@@ -447,11 +361,7 @@ switch (_scoutState) do
                 ]
             ] call KBCF_fnc_log;
 
-            _contact set
-            [
-                "lastScoutReport",
-                _observationEvent
-            ];
+            _contact set ["lastScoutReport", _observationEvent];
 
             [
                 "SCOUT",
@@ -475,6 +385,17 @@ switch (_scoutState) do
             ] call KBCF_fnc_log;
         };
 
+        private _conditionReport =
+        createHashMapFromArray
+        [
+            ["condition", _plan getOrDefault ["observationCondition", "UNKNOWN"]],
+            ["behaviorMode", _plan getOrDefault ["scoutBehaviorMode", "NONE"]],
+            ["reportedAt", serverTime],
+            ["sourceDrone", netId _drone]
+        ];
+
+        _contact set ["lastScoutConditionReport", _conditionReport];
+
         _result set ["success", true];
         _result set ["completed", true];
         _result set ["replanRequired", false];
@@ -484,8 +405,10 @@ switch (_scoutState) do
             "SCOUT",
             format
             [
-                "Prototype REPORT completion | Drone:%1",
-                netId _drone
+                "Integrated REPORT completion | Drone:%1 | Condition:%2 | Mode:%3",
+                netId _drone,
+                _conditionReport getOrDefault ["condition", "UNKNOWN"],
+                _conditionReport getOrDefault ["behaviorMode", "NONE"]
             ]
         ] call KBCF_fnc_log;
     };
@@ -501,7 +424,7 @@ switch (_scoutState) do
             "SCOUT",
             format
             [
-                "Prototype invalid state | Drone:%1 | State:%2",
+                "Integrated invalid state | Drone:%1 | State:%2",
                 netId _drone,
                 _scoutState
             ]
