@@ -1,14 +1,19 @@
 VERIFIED RUNTIME CHECKPOINTS
 Core Orchestration
+VERIFIED RUNTIME CHECKPOINTS
+Core Orchestration
 [PASS]
 
+Recon → Blackboard → Commander → Reservation → Assignment → Tracking → Prediction → Authorization → Plan Creation → ExecutePlan → ExecuteAction → RECON → COMPLETE → Cleanup → Automatic Retasking
 Recon → Blackboard → Commander → Reservation → Assignment → Tracking → Prediction → Authorization → Plan Creation → ExecutePlan → ExecuteAction → RECON → COMPLETE → Cleanup → Automatic Retasking
 
 Evidence: Runtime verified in Arma.
 
 Physical UAV Movement
+Physical UAV Movement
 [PASS]
 
+Engine started flyInHeight executed Movement order issued Drone physically moved
 Engine started flyInHeight executed Movement order issued Drone physically moved
 
 Evidence: Runtime verified in Arma.
@@ -20,6 +25,7 @@ Controller implemented. Behavior runtime verified.
 
 Evidence: Runtime verified in Arma.
 
+SCOUT State Persistence
 SCOUT State Persistence
 [PASS]
 
