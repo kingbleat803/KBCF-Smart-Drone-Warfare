@@ -79,13 +79,13 @@ if (_flightState == "IN_RANGE") exitWith
     };
 
     /*
-        CAS-style spawn: create the effect directly at the target's
-        position (not the drone's own position) and detonate shortly
-        after, the same way scripted CAS/artillery simulations work
-        when there's no real fired munition or AI pilot involved. This
-        removes the whole "drone caught in its own blast" problem
-        entirely - the drone is still ~dropRadius away from the target
-        when this fires, so there's no separation timing to get wrong.
+        Real physical drop from the drone's own position, falling
+        toward the ground over visible time - intentional, so a
+        player has a chance to see/hear it coming and react (move,
+        take cover) rather than an instant CAS-style snipe at the
+        target's position. Drone safety is handled separately below
+        via an explicit breakaway maneuver + margin on the arm delay,
+        not by faking the drop location.
 
         IEDUrbanSmall_Remote_Ammo: small, contained CfgVehicles-category
         explosive prop, infantry/grenade scale (same object family as
@@ -94,8 +94,8 @@ if (_flightState == "IN_RANGE") exitWith
         below is fully explicit and controlled.
     */
     private _payloadClass = "IEDUrbanSmall_Remote_Ammo";
-    private _releasePosition = getPosASL _target;
-    _releasePosition set [2, (_releasePosition select 2) + 0.2]; /* just above ground level at the target */
+    private _releasePosition = getPosASL _drone;
+    _releasePosition set [2, (_releasePosition select 2) - 1.5];
 
     private _munition = _payloadClass createVehicle _releasePosition;
 
@@ -110,18 +110,50 @@ if (_flightState == "IN_RANGE") exitWith
         _result
     };
 
+    private _droneVelocity = velocity _drone;
     _munition setPosASL _releasePosition;
+    _munition setVelocity
+    [
+        _droneVelocity select 0,
+        _droneVelocity select 1,
+        (_droneVelocity select 2) - 10 /* faster downward separation than before */
+    ];
 
     /*
-        Short delay to simulate travel time / give a beat between the
-        drop sound and the impact. No drone-proximity risk either way
-        since detonation happens at the target's location, not the
-        drone's.
+        Breakaway maneuver: the instant the payload is released, order
+        the drone to climb and continue forward away from the drop
+        point, instead of just coasting. This is what actually keeps
+        the drone clear - not the arm delay by itself.
+    */
+    private _breakawayDriver = driver _drone;
+    if (!isNull _breakawayDriver) then
+    {
+        private _breakawayGroup = group _breakawayDriver;
+        if (!isNull _breakawayGroup) then
+        {
+            private _breakawayPos =
+                (getPosATL _drone) vectorAdd [(_droneVelocity select 0) * 3, (_droneVelocity select 1) * 3, 60];
+
+            _breakawayGroup move _breakawayPos;
+        };
+
+        _drone setVelocity
+        [
+            _droneVelocity select 0,
+            _droneVelocity select 1,
+            15 /* climb */
+        ];
+    };
+
+    /*
+        Arm delay: long enough for real fall time + the breakaway
+        maneuver above to create separation, short enough that it's
+        still clearly "just dropped," not a CAS-style instant hit.
     */
     [_munition] spawn
     {
         params ["_bomb"];
-        sleep 0.6;
+        sleep 2.5;
         if (!isNull _bomb) then
         {
             _bomb setDamage 1;
