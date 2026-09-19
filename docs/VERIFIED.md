@@ -304,7 +304,30 @@ Audit Findings
 
 - No V3 regression observed.
 - No lifecycle regression observed.
+---------------------------------------------
+VERIFIED CHECKPOINT
 
+FPV V1 Impact Strike
+
+✅ Physical impact detonation verified
+ ✅ Impact-position explosion verified
+ ✅ Target-attached satchel behavior removed
+ ✅ Scheduler completion verified
+ ✅ Cleanup verified
+ ✅ End-to-end lifecycle verified
+ ✅ Committed and pushed
+
+SCOUT
+✅ Core behavior runtime verified
+
+FPV_STRIKE
+✅ Core behavior runtime verified
+
+BOMBER
+✅ Payload deployment runtime verified
+✅ Drone survives
+✅ Plan completion verified
+✅ Cleanup verified
 NOT YET VERIFIED:
 
 - LOST classification

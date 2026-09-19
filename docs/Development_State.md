@@ -431,14 +431,31 @@ Current frontier:
 - Future observation behaviors
 
 FPV:
-⬜ Future profile development
+VERIFIED CHECKPOINT
 
-BOMBER:
-⬜ Future profile development
+FPV V1 Impact Strike
 
-Project completion:
-⬜ Incomplete
+✅ Physical impact detonation verified
+ ✅ Impact-position explosion verified
+ ✅ Target-attached satchel behavior removed
+ ✅ Scheduler completion verified
+ ✅ Cleanup verified
+ ✅ End-to-end lifecycle verified
+ ✅ Committed and pushed
+---------------------------
+CURRENT STATUS 
 
+SCOUT
+✅ Core behavior runtime verified
+
+FPV_STRIKE
+✅ Core behavior runtime verified
+
+BOMBER
+✅ Payload deployment runtime verified
+✅ Drone survives
+✅ Plan completion verified
+✅ Cleanup verified
 Latest Runtime Verification
 
 - ObservationCondition instrumentation functioning.
