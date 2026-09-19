@@ -406,25 +406,29 @@ Current Frontier:
 
 VERIFIED
 
-Core Orchestration
+SCOUT
+
+✅ Exists
 ✅ Runtime Verified
+✅ Observation-Oriented Behavior
 
-Framework lifecycle:
-✅ Runtime Verified
+✅ SHADOW behavior exists
+✅ REPORT behavior exists
 
-SCOUT:
-🟡 Active profile development
+✅ ObservationCondition instrumentation
+✅ MovementState instrumentation
+✅ STATIONARY_TO_MOVING reporting
 
-SCOUT foundational increments:
-✅ State Persistence
-✅ V2
-✅ V3
+✅ ObservationEvent pipeline
+✅ Runtime Tested
 
-SCOUT doctrine implementation:
-⬜ Incomplete
+🟨 Doctrine refinement continues
 
-SCOUT full runtime verification:
-⬜ Incomplete
+Current frontier:
+- Information-gain doctrine
+- Observation quality
+- SHADOW decision quality
+- Future observation behaviors
 
 FPV:
 ⬜ Future profile development

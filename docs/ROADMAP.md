@@ -183,13 +183,29 @@ Current profile:
 SCOUT
 
 Completed SCOUT milestones:
-✅ State Persistence
-✅ V2 Movement Event Detection
-✅ V3 Observation Event Reporting
+SCOUT
 
-SCOUT completion:
-⬜ Doctrine Implementation Complete
-⬜ Full Runtime Verification Complete
+✅ Exists
+✅ Runtime Verified
+✅ Observation-Oriented Behavior
+
+✅ SHADOW behavior exists
+✅ REPORT behavior exists
+
+✅ ObservationCondition instrumentation
+✅ MovementState instrumentation
+✅ STATIONARY_TO_MOVING reporting
+
+✅ ObservationEvent pipeline
+✅ Runtime Tested
+
+🟨 Doctrine refinement continues
+
+Current frontier:
+- Information-gain doctrine
+- Observation quality
+- SHADOW decision quality
+- Future observation behaviors
 
 FPV completion:
 ⬜ Doctrine Created
