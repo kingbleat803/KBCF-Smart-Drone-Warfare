@@ -85,19 +85,52 @@ private _target =
 /*
     Validate assigned drone.
 */
-if (isNull _drone) exitWith
+if (!alive _drone) exitWith
 {
-    _plan set ["status", "FAILED"];
-    _plan set ["failureReason", "ASSIGNED_DRONE_MISSING"];
-    _plan set ["replanRequired", true];
-    _plan set ["lastExecutionTime", serverTime];
+    private _fpvImpactDetonated =
+        _drone getVariable
+        [
+            "KBCF_FPVImpactDetonated",
+            false
+        ];
 
-    _contact set ["attackPlan", _plan];
+    if (_fpvImpactDetonated) then
+    {
+        _plan set ["status", "COMPLETE"];
+        _plan set ["failureReason", ""];
+        _plan set ["replanRequired", false];
+        _plan set ["completedAt", serverTime];
+        _plan set ["lastExecutionTime", serverTime];
 
-    [
-        "PLAN",
-        "Plan failed | Assigned drone missing"
-    ] call KBCF_fnc_log;
+        _contact set ["attackPlan", _plan];
+
+        [
+            "PLAN",
+            format
+            [
+                "Plan completed | FPV physical impact | Drone:%1",
+                netId _drone
+            ]
+        ] call KBCF_fnc_log;
+    }
+    else
+    {
+        _plan set ["status", "FAILED"];
+        _plan set ["failureReason", "ASSIGNED_DRONE_DESTROYED"];
+        _plan set ["replanRequired", true];
+        _plan set ["lastExecutionTime", serverTime];
+
+        _contact set ["attackPlan", _plan];
+
+        [
+            "PLAN",
+            format
+            [
+                "Plan failed | Drone destroyed:%1",
+                netId _drone
+            ]
+        ] call KBCF_fnc_log;
+    };
 
     true
 };

@@ -3,28 +3,22 @@
 
     Description:
     Terminal action for the FPV_STRIKE drone profile.
-    Kamikaze behavior: closes on the target object's current
-    position and, once within detonation range, destroys the
-    drone in a self-inflicted explosion. The drone does not
-    survive a completed attack - that is what distinguishes
-    this from fn_actionGrenadeDrop.sqf, which releases a
-    munition and lets the drone continue.
 
-    Dispatched only after fn_actionMoveToIntercept has already
-    handed the plan's actionType over to "ATTACK" on arrival at
-    the original intercept point. This handler is responsible
-    for closing any remaining gap to the target's live position
-    and for the detonation itself, not for the initial approach.
+    The FPV continues a committed terminal run toward the live
+    target position. Detonation is caused by physical contact,
+    not by reaching a proximity radius around the assigned target.
 
-    Signature and Action Result contract preserved:
+    On contact with terrain or an object, the configured warhead
+    detonates at the drone's actual impact position and the FPV is
+    consumed by the strike. No explosive is attached or teleported
+    to the assigned target.
+
+    Existing Action Result contract preserved:
     params [_drone, _contact, _plan]
     returns HashMap: success, completed, replanRequired, reason
 
     Execution:
-    Server only.
-
-    Returns:
-    Action Result HashMap.
+    Server / drone-local execution through the existing action path.
 */
 
 params
@@ -47,7 +41,20 @@ if (isNull _drone) exitWith
 {
     _result set ["reason", "INVALID_DRONE"];
     _result set ["replanRequired", true];
+    _result
+};
 
+/*
+    The contact handler records a successful FPV strike before
+    consuming the drone. If the existing lifecycle evaluates this
+    action again while the destroyed vehicle object still exists,
+    report successful terminal completion rather than a failure.
+*/
+if (_drone getVariable ["KBCF_FPVImpactDetonated", false]) exitWith
+{
+    _result set ["success", true];
+    _result set ["completed", true];
+    _result set ["reason", "FPV_IMPACT_DETONATED"];
     _result
 };
 
@@ -55,7 +62,6 @@ if (!alive _drone) exitWith
 {
     _result set ["reason", "DRONE_DESTROYED"];
     _result set ["replanRequired", true];
-
     _result
 };
 
@@ -63,7 +69,6 @@ if ((count _plan) isEqualTo 0) exitWith
 {
     _result set ["reason", "INVALID_PLAN"];
     _result set ["replanRequired", true];
-
     _result
 };
 
@@ -78,13 +83,12 @@ if (isNull _target) exitWith
 {
     _result set ["reason", "TARGET_MISSING"];
     _result set ["replanRequired", true];
-
     _result
 };
 
 /*
-    A target that died between the handoff and this cycle is
-    a completed engagement, not a failure.
+    A target destroyed before physical impact ends this engagement.
+    The FPV does not teleport an explosive onto an already dead target.
 */
 if (!alive _target) exitWith
 {
@@ -96,7 +100,7 @@ if (!alive _target) exitWith
         "ATTACK",
         format
         [
-            "Kamikaze aborted | Target already down | Drone:%1",
+            "FPV terminal run ended | Target already down | Drone:%1",
             netId _drone
         ]
     ] call KBCF_fnc_log;
@@ -104,25 +108,19 @@ if (!alive _target) exitWith
     _result
 };
 
-private _driver =
-    driver _drone;
-
+private _driver = driver _drone;
 if (isNull _driver) exitWith
 {
     _result set ["reason", "DRONE_HAS_NO_DRIVER"];
     _result set ["replanRequired", true];
-
     _result
 };
 
-private _droneGroup =
-    group _driver;
-
+private _droneGroup = group _driver;
 if (isNull _droneGroup) exitWith
 {
     _result set ["reason", "DRONE_GROUP_MISSING"];
     _result set ["replanRequired", true];
-
     _result
 };
 
@@ -135,7 +133,7 @@ if (!local _driver) exitWith
         "ATTACK",
         format
         [
-            "Kamikaze run not issued | Driver not local | Drone:%1",
+            "FPV terminal run not issued | Driver not local | Drone:%1",
             netId _drone
         ]
     ] call KBCF_fnc_log;
@@ -143,57 +141,11 @@ if (!local _driver) exitWith
     _result
 };
 
-private _targetPosition =
-    getPosATL _target;
-
-private _distance =
-    _drone distance2D _targetPosition;
-
-/*
-    Tighter than the previous 8m generic-target radius. An
-    armor-defeating charge needs to actually be on the hull,
-    not merely nearby, so the drone is required to close all
-    the way in before detonation is permitted.
-*/
-private _detonationRadius = 5;
-
-if (_distance > _detonationRadius) exitWith
+if (!isEngineOn _drone) then
 {
-    _droneGroup move _targetPosition;
-
-    _result set ["success", true];
-    _result set ["completed", false];
-    _result set ["reason", "CLOSING_ON_TARGET"];
-
-    [
-        "ATTACK",
-        format
-        [
-            "Kamikaze closing | Drone:%1 | Distance:%2 | Target:%3",
-            netId _drone,
-            round _distance,
-            _targetPosition
-        ]
-    ] call KBCF_fnc_log;
-
-    _result
+    _drone engineOn true;
 };
 
-/*
-    Detonation. The warhead class is configurable per-plan
-    (fn_planAttack can write "warheadClass" into the plan for
-    a given profile); if it does not, this falls back to a
-    demolition-charge class. Charges in this family are
-    documented by Bohemia specifically as being intended for
-    scripted detonation via setDamage 1, and are the standard
-    vanilla vehicle-killing explosive - unlike the previous
-    Bo_GB6 frag grenade, this is sized to actually destroy
-    armor, not just harass infantry.
-
-    The charge is attached directly to the target rather than
-    placed at the drone's own position, so the impact point is
-    the hull itself. The drone is destroyed in the same event.
-*/
 private _warheadClassname =
     _plan getOrDefault
     [
@@ -201,50 +153,142 @@ private _warheadClassname =
         "SatchelCharge_Remote_Ammo_Scripted"
     ];
 
-private _warhead =
-    _warheadClassname createVehicle _targetPosition;
+/*
+    Install the impact handler once, after the FPV has entered its
+    terminal ATTACK action. The handler uses only data stored on the
+    drone so it remains independent of a specific vanilla or modded
+    FPV classname.
+*/
+private _impactHandlerId =
+    _drone getVariable
+    [
+        "KBCF_FPVImpactHandlerId",
+        -1
+    ];
 
-if (isNull _warhead) exitWith
+if (_impactHandlerId < 0) then
 {
-    _result set ["reason", "WARHEAD_CREATE_FAILED"];
-    _result set ["replanRequired", true];
+    _drone setVariable
+    [
+        "KBCF_FPVWarheadClass",
+        _warheadClassname
+    ];
+
+    _drone setVariable
+    [
+        "KBCF_FPVImpactDetonated",
+        false
+    ];
+
+    _impactHandlerId =
+        _drone addEventHandler
+        [
+            "EpeContactStart",
+            {
+                private _impactDrone = _this select 0;
+
+                if (isNull _impactDrone) exitWith {};
+                if (_impactDrone getVariable ["KBCF_FPVImpactDetonated", false]) exitWith {};
+
+                _impactDrone setVariable
+                [
+                    "KBCF_FPVImpactDetonated",
+                    true
+                ];
+
+                private _impactPosition = getPosATL _impactDrone;
+                private _impactWarheadClass =
+                    _impactDrone getVariable
+                    [
+                        "KBCF_FPVWarheadClass",
+                        "SatchelCharge_Remote_Ammo_Scripted"
+                    ];
+
+                private _impactWarhead =
+                    _impactWarheadClass createVehicle _impactPosition;
+
+                if (!isNull _impactWarhead) then
+                {
+                    _impactWarhead setDamage 1;
+                };
+
+                [
+                    "ATTACK",
+                    format
+                    [
+                        "FPV physical impact | Drone:%1 | Position:%2 | WarheadClass:%3 | WarheadCreated:%4",
+                        netId _impactDrone,
+                        _impactPosition,
+                        _impactWarheadClass,
+                        !isNull _impactWarhead
+                    ]
+                ] call KBCF_fnc_log;
+
+                _impactDrone setDamage 1;
+            }
+        ];
+
+    _drone setVariable
+    [
+        "KBCF_FPVImpactHandlerId",
+        _impactHandlerId
+    ];
 
     [
         "ATTACK",
         format
         [
-            "Kamikaze detonation failed | Reason:WARHEAD_CREATE_FAILED | Drone:%1 | WarheadClass:%2",
+            "FPV impact fuze armed | Drone:%1 | Handler:%2 | WarheadClass:%3",
             netId _drone,
+            _impactHandlerId,
             _warheadClassname
         ]
     ] call KBCF_fnc_log;
-
-    _result
 };
 
-_warhead attachTo
+/*
+    Continue the terminal run through the target position. There is
+    deliberately no detonation radius and no target attachment.
+    Physical contact owns detonation.
+*/
+private _targetPositionASL = aimPos _target;
+private _targetPositionATL = ASLToATL _targetPositionASL;
+private _dronePositionASL = getPosASL _drone;
+private _toTarget = _targetPositionASL vectorDiff _dronePositionASL;
+private _distance = vectorMagnitude _toTarget;
+
+if (_distance <= 0.01) then
+{
+    _toTarget = vectorDir _drone;
+};
+
+private _attackDirection = vectorNormalized _toTarget;
+private _currentSpeed = vectorMagnitude velocity _drone;
+private _terminalSpeed = _plan getOrDefault ["fpvTerminalSpeed", 45];
+private _commandedSpeed = _currentSpeed max _terminalSpeed;
+
+_droneGroup move _targetPositionATL;
+_drone setVectorDirAndUp
 [
-    _target,
-    [0, 0, 0.2]
+    _attackDirection,
+    vectorUp _drone
 ];
-
-_warhead setDamage 1;
-
-_drone setDamage 1;
+_drone setVelocity (_attackDirection vectorMultiply _commandedSpeed);
 
 _result set ["success", true];
-_result set ["completed", true];
-_result set ["reason", "KAMIKAZE_DETONATED"];
+_result set ["completed", false];
+_result set ["replanRequired", false];
+_result set ["reason", "FPV_TERMINAL_RUN"];
 
 [
     "ATTACK",
     format
     [
-        "Kamikaze detonated | Drone:%1 | Target:%2 | WarheadClass:%3 | Distance:%4",
+        "FPV terminal run | Drone:%1 | Distance:%2 | Speed:%3 | TargetPosition:%4",
         netId _drone,
-        netId _target,
-        _warheadClassname,
-        round _distance
+        round _distance,
+        round _commandedSpeed,
+        _targetPositionATL
     ]
 ] call KBCF_fnc_log;
 
