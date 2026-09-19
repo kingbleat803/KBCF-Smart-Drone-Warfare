@@ -137,7 +137,36 @@ OR
 
 # BOMBER Doctrine
 
-(TBD)
+# BOMBER Doctrine
+
+## Mission
+Deliver area-of-effect ordnance against infantry and soft targets while
+surviving the pass for re-tasking.
+
+## Core Priorities
+1. Target correctly (infantry / soft targets only)
+2. Payload delivery accuracy
+3. Drone survivability (reusable asset)
+4. Re-tasking readiness after drop
+
+## Desired Behaviors
+BOMBER should:
+- Close to effective drop radius before releasing payload
+- Release munition appropriate to target class
+- Survive the pass (distinguishing it from FPV_STRIKE)
+- Report completion and become available for retasking
+
+## Known Constraints
+- Default munition (Bo_GB6) is a fragmentation charge: effective vs.
+  infantry, not effective vs. armored vehicles.
+- Anti-armor targets should be routed to FPV_STRIKE instead, or BOMBER
+  needs a configurable warheadClass (mirroring fn_actionAttack.sqf's
+  pattern) before it can be considered for vehicle targets.
+
+## Mission Completion
+A BOMBER task is considered complete when the munition has been
+released and the plan reaches COMPLETE, regardless of confirmed kill —
+kill confirmation (BDA) is separate, not-yet-implemented future work.
 
 ---
 
