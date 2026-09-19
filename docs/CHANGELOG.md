@@ -1,66 +1,48 @@
-## KBCF Change Log
-
-### Purpose
-
+KBCF Change Log
+Purpose
 This document records historical project milestones.
 
 This document records:
 
-- Implemented changes
-- Repository milestones
-- Historical runtime checkpoints
-- Major design decisions
-
+Implemented changes
+Repository milestones
+Historical runtime checkpoints
+Major design decisions
 This document is historical in nature.
 
 Historical entries must not be interpreted as current runtime verification.
 
 Current runtime status is tracked separately in Development_State.md.
 
-## Major Milestones
-
-### Milestone: Core Orchestration Framework
-
+Major Milestones
+Milestone: Core Orchestration Framework
 Status:
 
 Historical milestone
 
 Repository development established:
 
-- Blackboard
-- Commander
-- Planner
-- Scheduler
-- Assignment lifecycle
-- Cleanup lifecycle
-- Retasking lifecycle
-
+Blackboard
+Commander
+Planner
+Scheduler
+Assignment lifecycle
+Cleanup lifecycle
+Retasking lifecycle
 Repository documentation records historical runtime validation of the core orchestration lifecycle.
 
----
-
-### Milestone: Autonomous Orchestration
-
+Milestone: Autonomous Orchestration
 Status:
 
 Historical milestone
 
 Repository documentation records historical testing covering:
 
-Detection
-→ Assignment
-→ Planning
-→ Execution
-→ Completion
-→ Cleanup
-→ Retasking
+Detection → Assignment → Planning → Execution → Completion → Cleanup → Retasking
 
 Current runtime status requires fresh verification.
 
----
-
-### Milestone: SHADOW Runtime Checkpoint
-
+Milestone: SHADOW Runtime Checkpoint
 Status:
 
 Historical runtime record
@@ -69,55 +51,35 @@ Repository documentation records a successful SHADOW runtime checkpoint.
 
 Current runtime status remains unknown until retested.
 
----
-
-### Milestone: FPV_STRIKE Runtime Checkpoint
-
+Milestone: FPV_STRIKE Runtime Checkpoint
 Status:
 
 Historical runtime record
 
 Repository documentation records:
 
-- Assignment
-- MOVE_TO_INTERCEPT
-- ATTACK transition
-- Terminal lethality
-- Completion
-- Cleanup
-
+Assignment
+MOVE_TO_INTERCEPT
+ATTACK transition
+Terminal lethality
+Completion
+Cleanup
 Physical impact behavior was not demonstrated.
 
 Current runtime status remains unknown until retested.
 
----
-
-### Milestone: Controller Design Workflow Adoption
-
+Milestone: Controller Design Workflow Adoption
 Status:
 
 Design milestone
 
 Project development workflow standardized as:
 
-Desired Arma Behavior
-↓
-Doctrine
-↓
-Controller Specification
-↓
-Pseudocode
-↓
-SQF
-↓
-Runtime
+Desired Arma Behavior ↓ Doctrine ↓ Controller Specification ↓ Pseudocode ↓ SQF ↓ Runtime
 
 This milestone marked the shift from framework creation toward controller behavior development.
 
----
-
-### Milestone: SCOUT State Persistence Verification
-
+Milestone: SCOUT State Persistence Verification
 Status:
 
 Historical runtime milestone
@@ -128,19 +90,7 @@ Determine whether SCOUT-owned controller state could persist inside the existing
 
 Runtime verified sequence:
 
-MOVE_TO_INTERCEPT
-↓
-RECON
-↓
-OBSERVE cycle 1
-↓
-OBSERVE cycle 2
-↓
-REPORT
-↓
-COMPLETE
-↓
-Terminal Cleanup
+MOVE_TO_INTERCEPT ↓ RECON ↓ OBSERVE cycle 1 ↓ OBSERVE cycle 2 ↓ REPORT ↓ COMPLETE ↓ Terminal Cleanup
 
 Verified Findings:
 
@@ -164,10 +114,7 @@ SCOUT-owned state persistence inside the existing ACTIVE plan lifecycle is runti
 
 No framework redesign is required to support persistent SCOUT controller behavior.
 
----
-
-### Milestone: Action Router Recovery
-
+Milestone: Action Router Recovery
 Status:
 
 Historical repository milestone
@@ -194,18 +141,11 @@ Physical UAV movement resumed through the intended execution path.
 
 The execution path:
 
-executePlan
-↓
-executeAction
-↓
-Action Handler
+executePlan ↓ executeAction ↓ Action Handler
 
 was successfully restored.
 
----
-
-### Milestone: SCOUT Prototype V2 Movement Event Detection
-
+Milestone: SCOUT Prototype V2 Movement Event Detection
 Status:
 
 Historical runtime milestone
@@ -216,13 +156,12 @@ Expand beyond persistence verification and implement the first runtime-verifiabl
 
 Implemented:
 
-- scoutMovementState
-- Refresh-gated movement evaluation
-- Horizontal speed classification
-- STATIONARY classification
-- MOVING classification
-- STATIONARY_TO_MOVING information event detection
-
+scoutMovementState
+Refresh-gated movement evaluation
+Horizontal speed classification
+STATIONARY classification
+MOVING classification
+STATIONARY_TO_MOVING information event detection
 Runtime verified evidence:
 
 MovementState Initialized
@@ -261,78 +200,71 @@ No framework redesign required.
 
 This milestone established the first runtime-verified SCOUT information-event capability.
 
----
-#### Milestone: SCOUT Prototype V3 Observation Event Reporting
-
+Milestone: SCOUT Prototype V3 Observation Event Reporting
 Status:
 
 Historical runtime milestone
 
 Objective:
 
-Extend SCOUT beyond movement-event detection and verify
-that observation events can survive until REPORT and be
-published to contact intelligence.
+Extend SCOUT beyond movement-event detection and verify that observation events can survive until REPORT and be published to contact intelligence.
 
 Implemented:
 
-- observationEvent storage
-- REPORT event consumption
-- REPORT event publication
-- lastScoutReport contact publication
-
+observationEvent storage
+REPORT event consumption
+REPORT event publication
+lastScoutReport contact publication
 Runtime verified evidence:
 
-Information Event Detected
-Observation Event Stored
-REPORT Consumed Event
-REPORT Published Event
+Information Event Detected Observation Event Stored REPORT Consumed Event REPORT Published Event
 
 Verified conclusion:
 
-Observation-event data successfully persisted
-from OBSERVE into REPORT.
+Observation-event data successfully persisted from OBSERVE into REPORT.
 
-REPORT successfully consumed stored
-observation-event data.
+REPORT successfully consumed stored observation-event data.
 
-REPORT successfully published observation
-information to the assigned contact.
+REPORT successfully published observation information to the assigned contact.
 
 No ownership changes were required.
 
 No framework redesign was required.
 
-This milestone established the first
-runtime-verified SCOUT observation-event
-reporting capability.
--------------------------------
+This milestone established the first runtime-verified SCOUT observation-event reporting capability.
 Latest Runtime Verification
 
-- ObservationCondition instrumentation functioning.
-- MovementState instrumentation functioning.
-- STATIONARY_TO_MOVING detection functioning.
-- ObservationEvent pipeline functioning.
-- REPORT pipeline functioning.
-
+ObservationCondition instrumentation functioning.
+MovementState instrumentation functioning.
+STATIONARY_TO_MOVING detection functioning.
+ObservationEvent pipeline functioning.
+REPORT pipeline functioning.
 Audit Findings
 
-- Blackboard stale-contact cleanup is driven by
-  confidence decay from lastSeen.
-- Contacts expire after approximately five minutes
-  without refresh.
-- Observed stale-contact behavior was existing
-  framework behavior, not a regression introduced
-  by the new patch.
-### Current Frontier
+Blackboard stale-contact cleanup is driven by confidence decay from lastSeen.
 
+Contacts expire after approximately five minutes without refresh.
+
+Observed stale-contact behavior was existing framework behavior, not a regression introduced by the new patch.
+
+Milestone: BOMBER GRENADE_DROP Repair
+Status: Historical runtime record fpv_strike fully runtime verified end to end
+
+fn_actionGrenadeDrop.sqf contained a stray comment fragment outside a valid /* */ block, breaking compilation of KBCF_fnc_actionGrenadeDrop. This caused the action router in fn_executeAction.sqf to fail with UNKNOWN_ACTION / INVALID_ACTION_RESULT whenever GRENADE_DROP was dispatched.
+
+Fix: removed the stray text, restored valid compilation.
+
+Verified: drone completes MOVE_TO_INTERCEPT → GRENADE_DROP → COMPLETE → Cleanup against infantry/soft targets. Bo_GB6 confirmed ineffective against armored targets (expected — not its intended role).
+
+Current runtime status: verified for infantry targets. Anti-armor payload work remains open (see FutureFrameworkProjects.md / Doctrine.md candidate list).
+
+Current Frontier
 See:
 
-- WelcomeBackNotes.md
-- Doctrine.md
-- Development_State.md
-- ROADMAP.md
-
+WelcomeBackNotes.md
+Doctrine.md
+Development_State.md
+ROADMAP.md
 for current project status.
 
 The persistence question has been answered.
