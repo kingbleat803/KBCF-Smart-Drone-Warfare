@@ -1,6 +1,6 @@
 /*
     File: fn_actionShadow.sqf
-
+	Author: KingBleat
     Description:
     Maintains an active observation position near a moving
     Arma game object.
@@ -138,6 +138,21 @@ if (!isEngineOn _drone) then
     _drone engineOn true;
 };
 
+/*
+    Survivability: if the drone is being shot at, an evasion maneuver
+    owns movement this cycle. Scanning below still runs so the SCOUT
+    keeps updating contacts; only flight-height and movement orders
+    are suspended.
+*/
+[_drone] call KBCF_fnc_installFireReaction;
+
+private _evading =
+[
+    _drone,
+    _contact,
+    _plan
+] call KBCF_fnc_evadeFire;
+
 private _flightHeight =
     _plan getOrDefault
     [
@@ -145,7 +160,7 @@ private _flightHeight =
         60
     ];
 
-if (_drone isKindOf "Air") then
+if (!_evading && {_drone isKindOf "Air"}) then
 {
     _drone flyInHeight
     [
@@ -246,9 +261,13 @@ private _distanceFromShadowPosition =
 */
 if
 (
-    _destinationChanged
-    ||
-    {_distanceFromShadowPosition > 35}
+    (
+        _destinationChanged
+        ||
+        {_distanceFromShadowPosition > 35}
+    )
+    &&
+    {!_evading}
 )
 then
 {
@@ -314,7 +333,7 @@ then
 _result set ["success", true];
 _result set ["completed", false];
 _result set ["replanRequired", false];
-_result set ["reason", "SHADOWING_TARGET"];
+_result set ["reason", if (_evading) then {"EVADING_FIRE"} else {"SHADOWING_TARGET"}];
 
 [
     "ACTION",

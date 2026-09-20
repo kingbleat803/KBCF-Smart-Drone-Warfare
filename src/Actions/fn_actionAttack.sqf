@@ -1,6 +1,6 @@
 /*
     File: fn_actionAttack.sqf
-
+	Author:KingBleat
     Description:
     Terminal action for the FPV_STRIKE drone profile.
 
@@ -146,6 +146,11 @@ if (!isEngineOn _drone) then
     _drone engineOn true;
 };
 
+/*
+    Idempotent. Normally already installed during MOVE_TO_INTERCEPT.
+*/
+[_drone] call KBCF_fnc_installFireReaction;
+
 private _warheadClassname =
     _plan getOrDefault
     [
@@ -263,6 +268,51 @@ if (_distance <= 0.01) then
 };
 
 private _attackDirection = vectorNormalized _toTarget;
+
+/*
+    Survivability: while under fire during the run-in, weave instead of
+    flying a perfectly straight line. Within fpvCommitDistance the FPV
+    stops weaving and commits, so the physical-contact fuze still
+    detonates on the target and not somewhere short of it.
+
+    The weave alternates left/right each cycle by about 14 degrees.
+*/
+if
+(
+    (missionNamespace getVariable ["KBCF_SURVIVAL_ENABLED", true])
+    && {_distance > (_plan getOrDefault ["fpvCommitDistance", 60])}
+    && {[_drone, 3] call KBCF_fnc_isUnderFire}
+)
+then
+{
+    private _weaveSign = _plan getOrDefault ["fpvWeaveSign", 1];
+
+    _plan set ["fpvWeaveSign", -_weaveSign];
+
+    private _lateral =
+        vectorNormalized
+        (
+            _attackDirection vectorCrossProduct [0, 0, 1]
+        );
+
+    _attackDirection =
+        vectorNormalized
+        (
+            _attackDirection vectorAdd (_lateral vectorMultiply (0.25 * _weaveSign))
+        );
+
+    [
+        "ATTACK",
+        format
+        [
+            "FPV weaving under fire | Drone:%1 | Distance:%2 | Sign:%3",
+            netId _drone,
+            round _distance,
+            _weaveSign
+        ]
+    ] call KBCF_fnc_log;
+};
+
 private _currentSpeed = vectorMagnitude velocity _drone;
 private _terminalSpeed = _plan getOrDefault ["fpvTerminalSpeed", 45];
 private _commandedSpeed = _currentSpeed max _terminalSpeed;

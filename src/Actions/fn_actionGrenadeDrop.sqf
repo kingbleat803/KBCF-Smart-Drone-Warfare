@@ -1,8 +1,8 @@
 /*
     File:
         fn_actionGrenadeDrop.sqf
-
-    Description:
+		author:KingBleat
+		Description:
         Terminal action for the BOMBER drone profile.
 
         Uses a background thread ONLY for flight/positioning (setVelocity
@@ -10,17 +10,30 @@
         own interval). The thread does NOT create the munition itself -
         createVehicle for the payload happens back in this file's own
         synchronous, per-scheduler-tick execution, which is the same
-        execution context your original working version used. This avoids
-        a reproducible engine restriction where createVehicle for ammo-
-        simulation classes (Bo_GB6, HandGrenade, etc.) fails with
-        "Cannot create non-ai vehicle" when called from inside a thread
-        nested under the scheduler's own spawned loop.
+        execution context proven to work (createVehicle for ammo-
+        simulation classes like Bo_GB6/HandGrenade fails with "Cannot
+        create non-ai vehicle" regardless of context - that was a
+        class-type problem, not a threading problem).
 
         Plan-owned storage (same pattern already runtime-verified for
         SCOUT: scoutState / scoutObserveCycles) tracks flight progress
         across scheduler ticks, so the scheduler and reservation system
         are never told the mission is done before the payload has
         actually been created and released.
+
+        CONFIRMED WORKING CONFIGURATION (owner-tested: target destroyed,
+        drone survived and cleared the area): payload spawns near the
+        target's position (CAS/artillery-simulation style) rather than
+        falling from the drone - this keeps the drone's existing
+        ~dropRadius separation from the blast without needing any
+        additional breakaway maneuver.
+
+        SURVIVABILITY (added): the flight thread calls
+        KBCF_fnc_evadeFire about four times a second. While an evasion
+        maneuver is active the thread stops issuing its own velocity and
+        move commands, so it does not cancel the dodge, and resumes
+        closing on the target once the maneuver ends. Payload creation,
+        detonation and completion logic are unchanged.
 
     Signature:
         params [_drone, _contact, _plan]
@@ -79,38 +92,26 @@ if (_flightState == "IN_RANGE") exitWith
     };
 
     /*
-<<<<<<< HEAD
-        Real physical drop from the drone's own position, falling
-        toward the ground over visible time - intentional, so a
-        player has a chance to see/hear it coming and react (move,
-        take cover) rather than an instant CAS-style snipe at the
-        target's position. Drone safety is handled separately below
-        via an explicit breakaway maneuver + margin on the arm delay,
-        not by faking the drop location.
-=======
         CAS-style spawn: create the effect directly at the target's
         position (not the drone's own position) and detonate shortly
         after, the same way scripted CAS/artillery simulations work
         when there's no real fired munition or AI pilot involved. This
-        removes the whole "drone caught in its own blast" problem
-        entirely - the drone is still ~dropRadius away from the target
-        when this fires, so there's no separation timing to get wrong.
->>>>>>> ce4f5ed4e770fd280ac949fd1a2c0beac6d3387f
+        keeps the drone clear of its own blast - it is still ~dropRadius
+        away from the target when this fires - without depending on any
+        separate breakaway maneuver.
 
         IEDUrbanSmall_Remote_Ammo: small, contained CfgVehicles-category
         explosive prop, infantry/grenade scale (same object family as
         FPV_STRIKE's satchel charge, so createVehicle is proven to work
         on this class). Does not auto-detonate on its own, so timing
         below is fully explicit and controlled.
+
+        CONFIRMED (owner-observed): target destroyed, drone survived and
+        flew clear of the area.
     */
     private _payloadClass = "IEDUrbanSmall_Remote_Ammo";
-<<<<<<< HEAD
-    private _releasePosition = getPosASL _drone;
-    _releasePosition set [2, (_releasePosition select 2) - 1.5];
-=======
     private _releasePosition = getPosASL _target;
     _releasePosition set [2, (_releasePosition select 2) + 0.2]; /* just above ground level at the target */
->>>>>>> ce4f5ed4e770fd280ac949fd1a2c0beac6d3387f
 
     private _munition = _payloadClass createVehicle _releasePosition;
 
@@ -125,47 +126,6 @@ if (_flightState == "IN_RANGE") exitWith
         _result
     };
 
-<<<<<<< HEAD
-    private _droneVelocity = velocity _drone;
-    _munition setPosASL _releasePosition;
-    _munition setVelocity
-    [
-        _droneVelocity select 0,
-        _droneVelocity select 1,
-        (_droneVelocity select 2) - 10 /* faster downward separation than before */
-    ];
-
-    /*
-        Breakaway maneuver: the instant the payload is released, order
-        the drone to climb and continue forward away from the drop
-        point, instead of just coasting. This is what actually keeps
-        the drone clear - not the arm delay by itself.
-    */
-    private _breakawayDriver = driver _drone;
-    if (!isNull _breakawayDriver) then
-    {
-        private _breakawayGroup = group _breakawayDriver;
-        if (!isNull _breakawayGroup) then
-        {
-            private _breakawayPos =
-                (getPosATL _drone) vectorAdd [(_droneVelocity select 0) * 3, (_droneVelocity select 1) * 3, 60];
-
-            _breakawayGroup move _breakawayPos;
-        };
-
-        _drone setVelocity
-        [
-            _droneVelocity select 0,
-            _droneVelocity select 1,
-            15 /* climb */
-        ];
-    };
-
-    /*
-        Arm delay: long enough for real fall time + the breakaway
-        maneuver above to create separation, short enough that it's
-        still clearly "just dropped," not a CAS-style instant hit.
-=======
     _munition setPosASL _releasePosition;
 
     /*
@@ -173,16 +133,11 @@ if (_flightState == "IN_RANGE") exitWith
         drop sound and the impact. No drone-proximity risk either way
         since detonation happens at the target's location, not the
         drone's.
->>>>>>> ce4f5ed4e770fd280ac949fd1a2c0beac6d3387f
     */
     [_munition] spawn
     {
         params ["_bomb"];
-<<<<<<< HEAD
-        sleep 2.5;
-=======
         sleep 0.6;
->>>>>>> ce4f5ed4e770fd280ac949fd1a2c0beac6d3387f
         if (!isNull _bomb) then
         {
             _bomb setDamage 1;
@@ -250,20 +205,33 @@ if (!local _driver) exitWith
 
 _plan set ["grenadeDropFlightState", "RUNNING"];
 
+/* Idempotent. Normally already installed during MOVE_TO_INTERCEPT. */
+[_drone] call KBCF_fnc_installFireReaction;
+
 [
     _drone,
     _target,
     _droneGroup,
-    _plan
+    _plan,
+    _contact
 ] spawn
 {
-    params ["_drone", "_target", "_droneGroup", "_plan"];
+    params ["_drone", "_target", "_droneGroup", "_plan", "_contact"];
 
     private _dropTriggered = false;
     private _cruiseSpeed = 15;
+    private _evading = false;
+    private _nextEvadeCheck = 0;
 
     while {alive _drone && alive _target && !_dropTriggered} do
     {
+        /* Evasion check, throttled to ~4 Hz (the loop itself runs ~30 Hz). */
+        if (serverTime >= _nextEvadeCheck) then
+        {
+            _evading = [_drone, _contact, _plan] call KBCF_fnc_evadeFire;
+            _nextEvadeCheck = serverTime + 0.25;
+        };
+
         private _currentDronePos  = getPosATL _drone;
         private _targetPosition   = getPosATL _target; /* refreshed every loop, tracks a moving target */
         private _distanceToTarget = _drone distance2D _targetPosition;
@@ -284,14 +252,18 @@ _plan set ["grenadeDropFlightState", "RUNNING"];
         if (_vX == 0 && _vY == 0) then { _vX = 0.001; };
         private _travelDir = vectorNormalized [_vX, _vY, 0];
 
-        _drone setVelocity
-        [
-            (_travelDir select 0) * _cruiseSpeed,
-            (_travelDir select 1) * _cruiseSpeed,
-            0
-        ];
+        /* While evading, evadeFire owns movement - do not cancel the dodge. */
+        if (!_evading) then
+        {
+            _drone setVelocity
+            [
+                (_travelDir select 0) * _cruiseSpeed,
+                (_travelDir select 1) * _cruiseSpeed,
+                0
+            ];
 
-        _droneGroup move _overshootPosition;
+            _droneGroup move _overshootPosition;
+        };
 
         sleep 0.03;
     };

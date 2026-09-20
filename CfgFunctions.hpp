@@ -88,5 +88,18 @@ class CfgFunctions
             class actionAttack {};
             class actionGrenadeDrop {};
         };
+
+        class Survival
+        {
+            file = "src\Survival";
+
+            class installFireReaction {};
+            class recordFire {};
+            class isUnderFire {};
+            class getThreats {};
+            class isPositionHidden {};
+            class findCoverPosition {};
+            class evadeFire {};
+        };
     };
 };

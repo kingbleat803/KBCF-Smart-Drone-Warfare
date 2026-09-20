@@ -1,6 +1,6 @@
 /*
     File: fn_actionReposition.sqf
-
+	Author: KingBleat
     Description:
     Moves the drone to a designated
     battlefield position.
@@ -98,6 +98,22 @@ if (isNull _driver) exitWith
 
 private _droneGroup =
     group _driver;
+
+/*
+    Survivability: while evading, the maneuver owns movement. The
+    reposition order is re-issued on the first cycle after it ends.
+*/
+[_drone] call KBCF_fnc_installFireReaction;
+
+if ([_drone, _contact, _plan] call KBCF_fnc_evadeFire) exitWith
+{
+    _result set ["success", true];
+    _result set ["completed", false];
+    _result set ["replanRequired", false];
+    _result set ["reason", "EVADING_FIRE"];
+
+    _result
+};
 
 _droneGroup move _targetPosition;
 

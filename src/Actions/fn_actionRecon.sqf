@@ -1,6 +1,6 @@
 /*
     File: fn_actionRecon.sqf
-
+	Author:KingBleat
     Description:
     Integrated SCOUT doctrine candidate for assigned-target
     observation inside the existing ACTIVE plan lifecycle.
@@ -78,6 +78,21 @@ switch (_scoutState) do
 {
     case "OBSERVE":
     {
+        /*
+            Survivability: if the SCOUT is being shot at, an evasion
+            maneuver owns movement this cycle. Scanning, tracking and
+            condition evaluation continue so intelligence is not lost;
+            only the observation-position movement is suspended.
+        */
+        [_drone] call KBCF_fnc_installFireReaction;
+
+        private _evading =
+        [
+            _drone,
+            _contact,
+            _plan
+        ] call KBCF_fnc_evadeFire;
+
         private _lastSeenBefore =
             _contact getOrDefault ["lastSeen", -1];
 
@@ -164,14 +179,30 @@ switch (_scoutState) do
             };
         };
 
-        private _behaviorResult =
-        [
-            _drone,
-            _contact,
-            _plan,
-            _observationCondition,
-            _wasRefreshed
-        ] call KBCF_fnc_applyScoutObservationBehavior;
+        private _behaviorResult = createHashMap;
+
+        if (_evading) then
+        {
+            _behaviorResult =
+            createHashMapFromArray
+            [
+                ["success", true],
+                ["mode", "EVADE"],
+                ["reason", "EVADING_FIRE"],
+                ["destination", []]
+            ];
+        }
+        else
+        {
+            _behaviorResult =
+            [
+                _drone,
+                _contact,
+                _plan,
+                _observationCondition,
+                _wasRefreshed
+            ] call KBCF_fnc_applyScoutObservationBehavior;
+        };
 
         _plan set ["lastScoutBehaviorResult", _behaviorResult];
 

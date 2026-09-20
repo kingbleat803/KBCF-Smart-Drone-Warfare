@@ -1,6 +1,6 @@
 /*
     File: fn_actionMoveToIntercept.sqf
-
+	Author:KingBleat
     Description:
     Directs the assigned drone toward the intercept
     position stored in the active plan.
@@ -405,8 +405,169 @@ if (!isEngineOn _drone) then
     ] call KBCF_fnc_log;
 };
 
+/*
+    Survivability layer.
+
+    Fire detection is installed once per drone. If the drone was shot
+    at, an evasion maneuver takes over movement for this cycle; the
+    normal intercept order is re-issued on the first cycle after the
+    maneuver ends.
+*/
+[_drone] call KBCF_fnc_installFireReaction;
+
+if ([_drone, _contact, _plan] call KBCF_fnc_evadeFire) exitWith
+{
+    _result set ["success", true];
+    _result set ["completed", false];
+    _result set ["replanRequired", false];
+    _result set ["reason", "EVADING_FIRE"];
+
+    _result
+};
+
 private _movementPosition =
     +_interceptPosition;
+
+private _droneProfile =
+    _plan getOrDefault
+    [
+        "droneProfile",
+        "UNKNOWN"
+    ];
+
+private _strikeProfile =
+    (missionNamespace getVariable ["KBCF_SURVIVAL_ENABLED", true])
+    && {_droneProfile in ["FPV_STRIKE", "BOMBER"]};
+
+/*
+    Strike profiles fly low so terrain and objects screen them.
+    Other profiles keep the verified 50 m flight height.
+*/
+private _flightHeight = 50;
+
+if (_strikeProfile) then
+{
+    _flightHeight =
+        _plan getOrDefault
+        [
+            "strikeApproachHeight",
+            (missionNamespace getVariable ["KBCF_STRIKE_APPROACH_HEIGHT", 15])
+        ];
+};
+
+private _moveReason = "MOVING_TO_INTERCEPT";
+
+/*
+    Terrain-masked approach (strike profiles only).
+
+    Once per plan, if the target is far enough away and hostiles are
+    near it, look for a staging point that terrain or a building hides
+    from them and fly there first. Then continue to the intercept
+    position as before.
+
+    approachStageState: "" (undecided) | NONE | TRAVEL | DONE
+*/
+private _stageState =
+    _plan getOrDefault
+    [
+        "approachStageState",
+        ""
+    ];
+
+if (_strikeProfile && {_stageState isEqualTo ""}) then
+{
+    _stageState = "NONE";
+
+    if
+    (
+        _distance >
+        (_plan getOrDefault ["approachStageMinDistance", 220])
+    )
+    then
+    {
+        private _threats =
+        [
+            _drone,
+            300,
+            _interceptPosition
+        ] call KBCF_fnc_getThreats;
+
+        if ((count _threats) > 0) then
+        {
+            private _stage =
+            [
+                _drone,
+                _interceptPosition,
+                _threats,
+                250,
+                120,
+                _flightHeight
+            ] call KBCF_fnc_findCoverPosition;
+
+            if ((count _stage) > 0) then
+            {
+                _plan set ["approachStagePosition", _stage get "position"];
+                _plan set ["approachStageAssignedAt", serverTime];
+
+                _stageState = "TRAVEL";
+
+                [
+                    "ACTION",
+                    format
+                    [
+                        "Cover stage selected | Drone:%1 | Kind:%2 | Position:%3 | Threats:%4",
+                        netId _drone,
+                        _stage get "kind",
+                        _stage get "position",
+                        count _threats
+                    ]
+                ] call KBCF_fnc_log;
+            };
+        };
+    };
+
+    _plan set ["approachStageState", _stageState];
+};
+
+if (_stageState isEqualTo "TRAVEL") then
+{
+    private _stagePosition =
+        _plan getOrDefault
+        [
+            "approachStagePosition",
+            []
+        ];
+
+    private _stageAge =
+        serverTime -
+        (_plan getOrDefault ["approachStageAssignedAt", serverTime]);
+
+    if
+    (
+        (count _stagePosition) < 2
+        || {(_drone distance2D _stagePosition) <= 25}
+        || {_stageAge > 60}
+    )
+    then
+    {
+        _plan set ["approachStageState", "DONE"];
+
+        [
+            "ACTION",
+            format
+            [
+                "Cover stage complete | Drone:%1 | Age:%2",
+                netId _drone,
+                round _stageAge
+            ]
+        ] call KBCF_fnc_log;
+    }
+    else
+    {
+        _movementPosition = +_stagePosition;
+        _moveReason = "MOVING_TO_COVER_STAGE";
+    };
+};
 
 /*
     Air assets require a flight altitude in order to
@@ -414,8 +575,6 @@ private _movementPosition =
 */
 if (_drone isKindOf "Air") then
 {
-    private _flightHeight = 50;
-
     _drone flyInHeight
     [
         _flightHeight,
@@ -459,7 +618,7 @@ _result set
 _result set
 [
     "reason",
-    "MOVING_TO_INTERCEPT"
+    _moveReason
 ];
 
 [

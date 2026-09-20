@@ -1,6 +1,6 @@
 /*
     File: fn_actionTrack.sqf
-
+	Author: Kingbleat
     Description:
     Directs the assigned drone to maintain
     contact with a target.
@@ -78,6 +78,22 @@ if (isNull _droneGroup) exitWith
         "reason",
         "DRONE_GROUP_MISSING"
     ];
+
+    _result
+};
+
+/*
+    Survivability: while evading, the maneuver owns movement. The plan
+    stays ACTIVE and normal tracking resumes when the maneuver ends.
+*/
+[_drone] call KBCF_fnc_installFireReaction;
+
+if ([_drone, _contact, _plan] call KBCF_fnc_evadeFire) exitWith
+{
+    _result set ["success", true];
+    _result set ["completed", false];
+    _result set ["replanRequired", false];
+    _result set ["reason", "EVADING_FIRE"];
 
     _result
 };
